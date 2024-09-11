@@ -1,14 +1,10 @@
+import React, { useState, useEffect } from "react";
 import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
-import "react-native-reanimated";
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+import SplashScreen from "./(auth)/SplashScreen";
 
 export default function RootLayout() {
-  const [loaded] = useFonts({
+  const [fontsLoaded] = useFonts({
     "Jakarta-Bold": require("../assets/fonts/PlusJakartaSans-Bold.ttf"),
     "Jakarta-ExtraBold": require("../assets/fonts/PlusJakartaSans-ExtraBold.ttf"),
     "Jakarta-ExtraLight": require("../assets/fonts/PlusJakartaSans-ExtraLight.ttf"),
@@ -18,14 +14,28 @@ export default function RootLayout() {
     "Jakarta-SemiBold": require("../assets/fonts/PlusJakartaSans-SemiBold.ttf"),
   });
 
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
+  const [isAppReady, setIsAppReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  if (!loaded) {
-    return null;
+  // Check if fonts are loaded and set app as ready
+  useEffect(() => {
+    if (fontsLoaded) {
+      setIsAppReady(true);
+    }
+  }, [fontsLoaded]);
+
+  // Simulate app loading time (3 seconds)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+
+    return () => clearTimeout(timer); // Clear the timer on unmount
+  }, []);
+
+  // Show splash screen while fonts are loading or the app is still loading
+  if (!isAppReady || isLoading) {
+    return <SplashScreen />;
   }
 
   return (
