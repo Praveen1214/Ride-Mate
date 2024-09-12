@@ -45,6 +45,7 @@
     "react-native-swiper": "^1.6.0",
     "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.10",
+    "ride-mate": "file:",
     "tailwindcss-react-native": "^1.7.10",
     "use-latest-callback": "^0.2.1"
   },
