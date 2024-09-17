@@ -5,13 +5,12 @@ import {
   Image,
   View,
   TouchableOpacity,
-  KeyboardAvoidingView,
   Platform,
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
+  StatusBar,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
@@ -41,8 +40,8 @@ const SignUp = () => {
     <TouchableOpacity
       onPress={() => setForm({ ...form, gender: value })}
       className={`flex-row items-center justify-center p-4 rounded-full ${
-        form.gender === value 
-          ? "border border-[#169958] bg-[#169958]" 
+        form.gender === value
+          ? "border border-[#169958] bg-[#169958]"
           : "bg-gray-200"
       }`}
     >
@@ -60,9 +59,9 @@ const SignUp = () => {
       </Text>
     </TouchableOpacity>
   );
-
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <>
+      <StatusBar translucent backgroundColor="transparent" />
       <KeyboardAwareScrollView
         ref={scrollViewRef}
         contentContainerStyle={{ flexGrow: 1 }}
@@ -72,31 +71,30 @@ const SignUp = () => {
       >
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
           <View className="flex-1 bg-white">
-            <Image
-              source={images.signUpCar}
-              className="w-full h-[200px]"
-              resizeMode="cover"
-            />
-            <Text className="text-2xl text-center my-6 font-bold">
-              Create Your Profile
-            </Text>
-            <View className="px-6 pb-6">
+            <View className="relative w-full h-[250px]">
+              <Image
+                source={images.signUpCar}
+                className="z-1 absolute top-0 left-0 right-0 w-full h-[250px]"
+              />
+              <Text className="z-0 text-2xl text-[black] font-JakartaSemiBold absolute bottom-5 left-5">
+                Create Your Profile
+              </Text>
+            </View>
+            <View className="px-6 pb-6 -mt-1 bg-white rounded-t-3xl">
               <InputField
-                label="First Name"
                 placeholder="Enter your first name"
+                label="Name"
                 icon={icons.person}
                 value={form.firstname}
                 onChangeText={(value) => setForm({ ...form, firstname: value })}
               />
               <InputField
-                label="Last Name"
                 placeholder="Enter your last name"
                 icon={icons.person}
                 value={form.lastname}
                 onChangeText={(value) => setForm({ ...form, lastname: value })}
               />
               <InputField
-                label="Email"
                 placeholder="Enter your email"
                 icon={icons.email}
                 textContentType="emailAddress"
@@ -105,7 +103,7 @@ const SignUp = () => {
                 onChangeText={(value) => setForm({ ...form, email: value })}
               />
 
-              <Text className="text-sm font-semibold mb-3 mt-3">Gender</Text>
+              <Text className="text-sm font-semibold mb-3 mt-3"></Text>
               <View className="flex-row justify-between mb-6">
                 <View className="flex-1 mr-3">
                   <GenderOption value="Male" icon="male" />
@@ -124,7 +122,7 @@ const SignUp = () => {
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAwareScrollView>
-    </SafeAreaView>
+    </>
   );
 };
 
