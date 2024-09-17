@@ -44,7 +44,7 @@ const PhoneNumberScreen = () => {
               <Text className="text-lg">+94</Text>
             </View>
             <TextInput
-              className="flex-1 text-lg px-4 py-3"
+              className="flex-1 text-m px-4 py-3"
               placeholder="Enter mobile number"
               keyboardType="phone-pad"
               value={phoneNumber}
@@ -64,7 +64,7 @@ const PhoneNumberScreen = () => {
             onPress={handleNext}
             disabled={phoneNumber.length !== 9}
           >
-            <Text className="text-center text-white text-lg font-bold">Next</Text>
+            <Text className="text-center text-white text-m font-bold">Next</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
