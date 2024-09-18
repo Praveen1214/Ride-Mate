@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState, useRef } from "react";
 import {
   ScrollView,
@@ -12,9 +13,9 @@ import {
   StatusBar,
 } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
 import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
-import { Ionicons } from "@expo/vector-icons";
 import { icons, images } from "@/constants";
 
 const SignUp = () => {

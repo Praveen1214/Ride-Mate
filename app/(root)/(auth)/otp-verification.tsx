@@ -1,3 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -11,9 +14,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useRouter } from "expo-router";
-import { useRoute } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 
 const OTPVerificationScreen = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -37,7 +37,7 @@ const OTPVerificationScreen = () => {
       setIsLoading(true);
       try {
         // Simulating API call
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         router.push("/(tabs)/home");
       } catch (error) {
         console.error("OTP verification failed:", error);
@@ -66,10 +66,26 @@ const OTPVerificationScreen = () => {
 
   const shakeInputs = () => {
     Animated.sequence([
-      Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
-      Animated.timing(shakeAnimation, { toValue: -10, duration: 100, useNativeDriver: true }),
-      Animated.timing(shakeAnimation, { toValue: 10, duration: 100, useNativeDriver: true }),
-      Animated.timing(shakeAnimation, { toValue: 0, duration: 100, useNativeDriver: true })
+      Animated.timing(shakeAnimation, {
+        toValue: 10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeAnimation, {
+        toValue: -10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeAnimation, {
+        toValue: 10,
+        duration: 100,
+        useNativeDriver: true,
+      }),
+      Animated.timing(shakeAnimation, {
+        toValue: 0,
+        duration: 100,
+        useNativeDriver: true,
+      }),
     ]).start();
   };
 
@@ -102,7 +118,7 @@ const OTPVerificationScreen = () => {
             </TouchableOpacity>
           </Text>
 
-          <Animated.View 
+          <Animated.View
             className="flex-row justify-center space-x-4 mb-6"
             style={{ transform: [{ translateX: shakeAnimation }] }}
           >
@@ -136,7 +152,9 @@ const OTPVerificationScreen = () => {
               }}
               disabled={countdown > 0}
             >
-              <Text className={`text-sm ${countdown > 0 ? "text-gray-400" : "text-green-600"}`}>
+              <Text
+                className={`text-sm ${countdown > 0 ? "text-gray-400" : "text-green-600"}`}
+              >
                 {countdown > 0 ? `Resend in ${countdown}s` : "Resend Code"}
               </Text>
             </TouchableOpacity>
