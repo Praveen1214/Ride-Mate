@@ -104,7 +104,7 @@ const SignUp = () => {
                 onChangeText={(value) => setForm({ ...form, email: value })}
               />
 
-              <Text className="text-sm font-semibold mb-3 mt-3"></Text>
+              <Text className="mt-3 mb-3 text-sm font-semibold"></Text>
               <View className="flex-row justify-between mb-6">
                 <View className="flex-1 mr-3">
                   <GenderOption value="Male" icon="male" />
