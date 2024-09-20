@@ -89,7 +89,7 @@ const HomeScreen = () => {
       </View>
 
       {/* Ride Form */}
-      <View className="absolute bottom-16 left-4 right-4 bg-white rounded-lg shadow-lg mb-10">
+      <View className="absolute bottom-16 left-4 right-4 bg-white rounded-lg shadow-lg mb-10 shadow-md">
         <View className="flex-row mb-4">
           <TouchableOpacity
             className={`flex-1 py-3 flex-row justify-center items-center ${
@@ -135,22 +135,28 @@ const HomeScreen = () => {
         </View>
 
         <ScrollView>
-          <View className="flex-row mb-3 items-center gap-3 pl-5 border-b border-gray-100">
-            <Text className="text-xs text-gray-700 w-20">PICKUP</Text>
+          <View className="flex-row mb-1 items-center mt-1 pl-5">
+            <Text className="text-xs text-gray-700 w-20 font-medium text-sm">PICKUP</Text>
             <TextInput
               placeholder={userAddress}
               placeholderTextColor="gray"
-              className="text-gray-700 flex-1 py-2 px-3 rounded"
+              className="text-gray-700 flex-1  px-3 rounded"
             />
           </View>
+          <View className="absolute h-[1px] bg-gray-300 top-[48px] left-16 right-12" />
+          <View className="mr-4 items-left ml-7 h-10 ">
+            <View className="w-3 h-3 bg-gray-400 rounded-full" />
+            <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-1 " />
+            <View className="w-3 h-3 bg-gray-400 rounded-full" />
+          </View>
 
-          <View className="flex-row mb-3 items-center gap-3 pl-5">
-            <Text className="text-xs text-gray-700 mb-1 w-20">DROP</Text>
+          <View className="flex-row mb-3 items-center pl-5">
+            <Text className="text-xs text-gray-700 mb-1 w-20 font-medium text-sm">DROP</Text>
             <TouchableOpacity
               onPress={handleNavigateToFindRide}
               className="flex-1"
             >
-              <Text className="text-gray-700 py-2 px-3 rounded">
+              <Text className="text-gray-400 pb-2 px-3 rounded font-bold text-base">
                 Where are you Drop?
               </Text>
             </TouchableOpacity>
