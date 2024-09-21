@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions, Image, Alert } from "react-native";
+import { View, StyleSheet, Dimensions, Image, Text, ScrollView, TouchableOpacity } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 import axios from "axios";
 
-// Set the Google Maps API Keys
+// Set the Google Maps API Key
 const GOOGLE_API_KEY = "AIzaSyDa1olgsfiH0ktBXGGkG2P_PXy1f5bIUdE";
 
 const CarpoolMap = () => {
@@ -28,16 +28,19 @@ const CarpoolMap = () => {
       id: 1,
       coordinate: { latitude: 6.9291, longitude: 79.8602 },
       pickedUp: false,
+      movingWithVehicle: false,
     },
     {
       id: 2,
       coordinate: { latitude: 6.93, longitude: 79.855 },
       pickedUp: false,
+      movingWithVehicle: false,
     },
     {
       id: 3,
       coordinate: { latitude: 6.932, longitude: 79.85 },
       pickedUp: false,
+      movingWithVehicle: false,
     },
   ]);
 
@@ -129,17 +132,32 @@ const CarpoolMap = () => {
         setVehiclePosition(route[index]);
 
         // Check if vehicle is close to any waiting passengers
-        passengers.forEach((passenger, i) => {
-          if (
-            !passenger.pickedUp &&
-            calculateDistance(route[index], passenger.coordinate) < 0.05
-          ) {
-            // within 50 meters
-            Alert.alert(`Passenger ${passenger.id} has boarded the vehicle.`);
-            passengers[i].pickedUp = true; // Mark as picked up
-            setPassengers([...passengers]); // Update state
-          }
-        });
+        setPassengers((prevPassengers) =>
+          prevPassengers.map((passenger) => {
+            if (
+              !passenger.pickedUp &&
+              calculateDistance(route[index], passenger.coordinate) < 0.05
+            ) {
+              // within 50 meters
+              return {
+                ...passenger,
+                pickedUp: true,
+                movingWithVehicle: true,
+                coordinate: route[index], // Move the passenger with the vehicle
+              };
+            }
+
+            // If the passenger is moving with the vehicle, update their position
+            if (passenger.movingWithVehicle) {
+              return {
+                ...passenger,
+                coordinate: route[index], // Move passenger along with vehicle
+              };
+            }
+
+            return passenger;
+          })
+        );
 
         index += 1;
       } else {
@@ -159,71 +177,175 @@ const CarpoolMap = () => {
   }, [route]);
 
   return (
-    <View style={styles.container}>
-      <MapView
-        style={styles.map}
-        provider={PROVIDER_GOOGLE}
-        initialRegion={region}
-        showsUserLocation={true}
-        followsUserLocation={true}
-        zoomEnabled={true}
-      >
-        {/* Start Marker */}
-        <Marker coordinate={coordinates.start} title="Start Location">
-          <Image
-            source={require("../../../assets/images/start_marker.png")}
-            style={{ height: 43, width: 43 }}
+    <View style= { styles.container } >
+    {/* Map View */ }
+    < MapView
+  style = { styles.map }
+  provider = { PROVIDER_GOOGLE }
+  initialRegion = { region }
+  showsUserLocation = { true}
+  followsUserLocation = { true}
+  zoomEnabled = { true}
+    >
+    {/* Start Marker */ }
+    < Marker coordinate = { coordinates.start } title = "Start Location" >
+      <Image
+            source={ require("../../../assets/images/start_marker.png") }
+  style = {{ height: 43, width: 43 }
+}
           />
-        </Marker>
+  </Marker>
 
-        {/* End Marker */}
-        <Marker coordinate={coordinates.end} title="End Location">
-          <Image
-            source={require("../../../assets/images/end_marker.png")}
-            style={{ height: 43, width: 43 }}
+{/* End Marker */ }
+<Marker coordinate={ coordinates.end } title = "End Location" >
+  <Image
+            source={ require("../../../assets/images/end_marker.png") }
+style = {{ height: 43, width: 43 }}
           />
-        </Marker>
+  </Marker>
 
-        {/* Vehicle Marker (starting at the start point, then moving along the route) */}
-        <Marker coordinate={vehiclePosition} title="Vehicle">
-          <Image
-            source={require("../../../assets/images/vehicle.png")}
-            style={{ height: 35, width: 35 }}
+{/* Vehicle Marker */ }
+<Marker coordinate={ vehiclePosition } title = "Vehicle" >
+  <Image
+            source={ require("../../../assets/images/vehicle.png") }
+style = {{ height: 35, width: 35 }}
           />
-        </Marker>
+  </Marker>
 
-        {/* Passenger Markers */}
-        {passengers.map((passenger) =>
-          !passenger.pickedUp ? (
-            <Marker
-              key={passenger.id}
-              coordinate={passenger.coordinate}
-              title={`Passenger ${passenger.id}`}
-            >
-              <Image
-                source={require("../../../assets/images/passenger_marker.png")}
-                style={{ height: 35, width: 35 }}
-              />
-            </Marker>
-          ) : null
-        )}
+{/* Passenger Markers */ }
+{
+  passengers.map((passenger) => (
+    <Marker
+            key= { passenger.id }
+            coordinate = { passenger.coordinate }
+            title = {`Passenger ${passenger.id}`}
+          >
+  <Image
+              source={ require("../../../assets/images/passenger_marker.png") }
+style = {{ height: 35, width: 35 }}
+            />
+  </Marker>
+        ))}
 
-        {/* Route Polyline */}
-        {route.length > 0 && (
-          <Polyline coordinates={route} strokeColor="black" strokeWidth={3} />
-        )}
-      </MapView>
-    </View>
+{/* Route Polyline */ }
+{
+  route.length > 0 && (
+    <Polyline coordinates={ route } strokeColor = "black" strokeWidth = { 3} />
+        )
+}
+</MapView>
+
+{/* Ride Information at the Bottom */ }
+<View style={ styles.infoContainer }>
+  <Text style={ styles.rideTitle }> Tracking Activity </Text>
+    < View style = { styles.rideDetails } >
+      <View style={ styles.segmentHeader }>
+        <Text style={ styles.segmentTitle }> Route </Text>
+          < TouchableOpacity style = { styles.routeButton } >
+            <Text style={ styles.routeButtonText }> Start </Text>
+              </TouchableOpacity>
+              </View>
+
+              < ScrollView >
+              <View style={ styles.rideItem }>
+                <Text style={ styles.rideText }> Start trip(10:00 am) </Text>
+                  < Text style = { styles.rideSubText } > 453 A ABCD Street, Colombo </Text>
+                    </View>
+
+{
+  passengers.map((passenger, index) =>
+    passenger.pickedUp ? (
+      <View style= { styles.rideItem } key = { passenger.id } >
+      <Text style={ styles.rideText } >
+  Pick up(10: { 10 + index } am)
+  </Text>
+  < Text style = { styles.rideSubText } >
+  Passenger { passenger.id }: 453 A ABCD Street, Colombo
+  </Text>
+  </View>
+  ) : null
+            )
+}
+
+<View style={ styles.rideItem }>
+  <Text style={ styles.rideText }> End trip(11:00 am) </Text>
+    < Text style = { styles.rideSubText } > 453 A ABCD Street, Colombo </Text>
+      </View>
+      </ScrollView>
+      </View>
+      </View>
+      </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#fff",
   },
   map: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height * 0.8,
+    height: Dimensions.get("window").height,
+  },
+  infoContainer: {
+    backgroundColor: "#fff",
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    position: "absolute",
+    bottom: 0,
+    width: "100%",
+    height: Dimensions.get("window").height * 0.4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
+  },
+  rideTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+    color: "#333",
+  },
+  rideDetails: {
+    backgroundColor: "#f0f0f0",
+    borderRadius: 15,
+    padding: 15,
+  },
+  segmentHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  segmentTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  routeButton: {
+    backgroundColor: "#007BFF",
+    borderRadius: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+  },
+  routeButtonText: {
+    color: "#fff",
+    fontSize: 14,
+    fontWeight: "bold",
+  },
+  rideItem: {
+    marginBottom: 10,
+  },
+  rideText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#555",
+  },
+  rideSubText: {
+    fontSize: 14,
+    color: "#888",
   },
 });
 
