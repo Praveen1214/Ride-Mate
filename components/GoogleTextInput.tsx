@@ -1,16 +1,12 @@
-import { View, Image } from "react-native";
+import { View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-
-import { icons } from "@/constants";
 import { GoogleInputProps } from "@/types/type";
 
 const googlePlacesApiKey = process.env.EXPO_PUBLIC_PLACES_API_KEY;
 
 const GoogleTextInput = ({
-  icon,
   initialLocation,
   containerStyle,
-  textInputBackgroundColor,
   handlePress,
 }: GoogleInputProps) => {
   return (
@@ -25,26 +21,20 @@ const GoogleTextInput = ({
           textInputContainer: {
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: 20,
-            marginHorizontal: 20,
+            borderRadius: 0, // Remove the rounded border if not needed
+            marginHorizontal: 0, // Remove horizontal margins
             position: "relative",
-            shadowColor: "#d4d4d4",
+            shadowColor: "transparent", // Remove the shadow
           },
           textInput: {
-            backgroundColor: textInputBackgroundColor
-              ? textInputBackgroundColor
-              : "white",
-            fontSize: 16,
-            fontWeight: "600",
-            marginTop: 5,
+            backgroundColor: "transparent", // Remove background color
+            fontSize: 14,
+            fontWeight: "500",
+            
             width: "100%",
-            borderRadius: 200,
           },
           listView: {
-            backgroundColor: textInputBackgroundColor
-              ? textInputBackgroundColor
-              : "white",
-            position: "relative",
+            backgroundColor: "white", // Keep the dropdown background for the search results
             top: 0,
             width: "100%",
             borderRadius: 10,
@@ -63,15 +53,7 @@ const GoogleTextInput = ({
           key: googlePlacesApiKey,
           language: "en",
         }}
-        renderLeftButton={() => (
-          <View className="justify-center items-center w-6 h-6">
-            <Image
-              source={icon ? icon : icons.search}
-              className="w-6 h-6"
-              resizeMode="contain"
-            />
-          </View>
-        )}
+        // Remove the search button by omitting the renderLeftButton
         textInputProps={{
           placeholderTextColor: "gray",
           placeholder: initialLocation ?? "Where do you want to go?",
