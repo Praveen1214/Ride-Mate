@@ -1,117 +1,175 @@
-import React, { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import * as Location from "expo-location";
+import { router } from "expo-router";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TextInput,
   SafeAreaView,
   StatusBar,
-  Platform,
+  TouchableOpacity,
+  ScrollView,
+  Keyboard,
 } from "react-native";
-import { Button, Avatar } from "react-native-paper";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from "react-native-vector-icons/FontAwesome";
+
+import GoogleTextInput from "@/components/GoogleTextInput";
+import Map from "@/components/Map";
+import { useLocationStore } from "@/store";
+
+const PRIMARY_COLOR = "#0C6C41";
 
 const HomeScreen = () => {
+  const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("find");
+  const [hasPermission, setHasPermission] = useState(false);
+
+  const {
+    userAddress,
+    destinationAddress,
+    setDestinationLocation,
+    setUserLocation,
+  } = useLocationStore();
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setHasPermission(false);
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      const address = await Location.reverseGeocodeAsync({
+        latitude: location.coords?.latitude!,
+        longitude: location.coords?.longitude!,
+      });
+
+      setUserLocation({
+        latitude: location.coords?.latitude,
+        longitude: location.coords?.longitude,
+        address: `${address[0].name}, ${address[0].region}`,
+      });
+    })();
+  }, []);
+
+  const handleNavigateToFindRide = () => {
+    router.push({
+      pathname: "/(root)/find-ride",
+    });
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
-      {/* Full-page Map */}
-      <View className="absolute top-0 left-0 right-0 bottom-0 bg-gray-200">
-        {/* Replace this View with actual MapView component */}
-        <Text className="text-center pt-4">Map Placeholder</Text>
+      {/* Map View */}
+      <View className="flex flex-row items-center bg-transparent h-full">
+        <Map />
       </View>
 
       {/* Header */}
-      <View className="bg-white px-4 pt-2 pb-4">
-        <View className="flex-row justify-between items-center">
-          <View className="flex-row items-center">
-            <Avatar.Text size={40} label="JD" className="bg-black" />
-            <View className="ml-3">
-              <Text className="text-lg font-semibold">Welcome Abhishek</Text>
-              <Text className="text-gray-600">Malabe</Text>
-            </View>
+      <View className="absolute top-12 left-0 right-0 bg-white px-4 py-2 flex-row justify-between items-center">
+        <View className="flex-row items-center">
+          <View className="w-9 h-9 bg-black rounded-full items-center justify-center">
+            <Text className="text-white text-lg font-bold">JD</Text>
           </View>
-          <Icon name="notifications-none" size={24} color="#00A86B" />
+          <View className="flex-col ml-3">
+            <Text className="text-m font-semibold leading-6">
+              Welcome! Praveen
+            </Text>
+            <Text className="text-sm text-gray-600 leading-4">Malabe</Text>
+          </View>
+        </View>
+        <View className="w-6 h-6 items-center justify-center">
+          <Icon name="bell" size={20} color="#000" />
         </View>
       </View>
 
-      {/* Ride Component */}
+      {/* Ride Form */}
       <View
-        className="bg-white rounded-t-3xl shadow-lg p-4 absolute bottom-0 left-0 right-0 m-5 mb-20"
-        style={{ paddingBottom: Platform.OS === "ios" ? 20 : 0 }}
+        className="absolute bottom-16 left-4 right-4 bg-white rounded-xl mb-8 shadow-md"
+        style={{ elevation: 5 }}
       >
-        {/* Find and Offer Ride Tabs */}
-        <View className="flex-row mb-6">
-          <Button
-            icon="map-marker"
-            mode={activeTab === "find" ? "contained" : "outlined"}
+        <View className="flex-row mb-4">
+          <TouchableOpacity
+            className={`flex-1 py-3 flex-row justify-center items-center ${
+              activeTab === "find" ? "bg-[#0C6C41]" : "bg-gray-200"
+            } rounded-l-md`}
             onPress={() => setActiveTab("find")}
-            className={`rounded-l-full flex-1 ${activeTab === "find" ? "bg-green-600" : "border-green-600"}`}
-            labelStyle={{ color: activeTab === "find" ? "white" : "green" }}
           >
-            Find ride
-          </Button>
-          <Button
-            icon="car"
-            mode={activeTab === "offer" ? "contained" : "outlined"}
+            <Ionicons
+              name="location-outline"
+              size={18}
+              color={activeTab === "find" ? "white" : "gray"}
+              style={{ marginRight: 8 }}
+            />
+            <Text
+              className={`text-center ${
+                activeTab === "find" ? "text-white" : "text-gray-700"
+              } text-[15px] font-regular`}
+            >
+              Find ride
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className={`flex-1 py-3 flex-row justify-center items-center ${
+              activeTab === "offer" ? "bg-[#0C6C41]" : "bg-gray-200"
+            } rounded-r-md`}
             onPress={() => setActiveTab("offer")}
-            className={`rounded-r-full flex-1 ${activeTab === "offer" ? "bg-green-600" : "border-green-600"}`}
-            labelStyle={{ color: activeTab === "offer" ? "white" : "green" }}
           >
-            Offer ride
-          </Button>
+            <Ionicons
+              name="location"
+              size={18}
+              color={activeTab === "offer" ? "white" : "gray"}
+              style={{ marginRight: 8 }}
+            />
+            <Text
+              className={`text-center ${
+                activeTab === "offer" ? "text-white" : "text-gray-700"
+              } text-[15px] font-regular`}
+            >
+              Offer ride
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        {/* Form Inputs */}
-        <View>
-          {/* Pickup */}
-          <View className="flex-row items-center mb-4">
-            <Icon name="location-on" size={20} color="#00A86B" />
-            <View className="ml-2 flex-1">
-              <Text className="text-xs font-semibold text-gray-500">
-                PICKUP
-              </Text>
-              <TextInput
-                className="border-b border-gray-300 py-2"
-                value="Location fetched"
-                editable={false}
-              />
-            </View>
-          </View>
-
-          {/* Drop */}
-          <View className="flex-row items-center mb-4">
-            <Icon name="location-on" size={20} color="#00A86B" />
-            <View className="ml-2 flex-1">
-              <Text className="text-xs font-semibold text-gray-500">DROP</Text>
-              <TextInput
-                className="border-b border-gray-300 py-2"
-                placeholder="Where are you Drop?"
-                placeholderTextColor="#999"
-              />
-            </View>
-          </View>
-
-          {/* Date and Time */}
-          <View className="flex-row items-center mb-4">
-            <Icon name="location-on" size={20} color="#00A86B" />
-            <Text className="text-xs font-semibold text-gray-500">
-              DATE AND TIME
+        <ScrollView>
+          <View className="flex-row items-center justify-start">
+            <Text className="text-xs text-blue-500 w-20 font-medium ml-3">
+              PICKUP
             </Text>
             <TextInput
-              className="border-b border-gray-300 py-2"
-              placeholder="Select Date and Time"
-              placeholderTextColor="#999"
+              placeholder={userAddress}
+              placeholderTextColor="gray"
+              className="text-gray-700 flex-1 px-3 rounded ml-0"
             />
           </View>
+          <View className="absolute h-[1px] bg-gray-300 top-[38px] left-16 right-12" />
+          <View className="mr-4 items-left ml-7 h-10">
+            <View className="w-2 h-2 bg-gray-400 rounded-full" />
+            <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
+            <View className="w-2 h-2 bg-gray-400 rounded-full" />
+          </View>
 
-          {/* Find/Offer Ride Button */}
-          <Button mode="contained" className="bg-green-600 rounded-full py-2">
-            {activeTab === "find" ? "Find ride" : "Offer ride"}
-          </Button>
-        </View>
+          <View className="flex-row mb-3 items-center pl-5">
+            <Text className="text-xs text-orange-500 w-20 font-medium">
+              DROP
+            </Text>
+
+            <TouchableOpacity
+              onPress={handleNavigateToFindRide}
+              className="flex-1"
+            >
+              <Text className="text-gray-700 flex-1 px-3 rounded ml-0 mb-2 font-medium">
+                Where are you Drop?
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
