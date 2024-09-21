@@ -49,7 +49,7 @@ const OfferRideScreen = () => {
   return (
     <SafeAreaView className="flex-1 bg-white">
       {/* Hide StatusBar */}
-      <StatusBar barStyle="dark-content" backgroundColor="#0C6C41"/>
+      <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       {/* Header */}
       <View className="bg-[#0C6C41] py-4 px-4 flex-row items-center">
