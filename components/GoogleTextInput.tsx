@@ -11,31 +11,39 @@ const GoogleTextInput = ({
 }: GoogleInputProps) => {
   return (
     <View
-      className={`flex flex-row items-center justify-center relative z-50 rounded-xl ${containerStyle}`}
+      className={`flex flex-row items-center justify-center relative z-50 ${containerStyle}`}
+      style={{ margin: 0, padding: 0 }}
     >
       <GooglePlacesAutocomplete
         fetchDetails={true}
         placeholder="Search"
         debounce={200}
         styles={{
+          container: {
+            flex: 1,
+            width: '100%',
+          },
           textInputContainer: {
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: 0, // Remove the rounded border if not needed
-            marginHorizontal: 0, // Remove horizontal margins
+            borderRadius: 0,
+            marginHorizontal: 0,
+            padding: 0,
             position: "relative",
-            shadowColor: "transparent", // Remove the shadow
+            shadowColor: "transparent",
           },
           textInput: {
-            backgroundColor: "transparent", // Remove background color
-            fontSize: 14,
-            fontWeight: "500",
-            
+            backgroundColor: "transparent",
+            fontSize: 15,
+            fontWeight: "700",
+            margin: 0,
+            padding: 0,
+            height: 30, // Adjust this value as needed for your layout
             width: "100%",
           },
           listView: {
-            backgroundColor: "white", // Keep the dropdown background for the search results
-            top: 0,
+            backgroundColor: "white",
+            top: 30, // Adjust this value to match the height of your textInput
             width: "100%",
             borderRadius: 10,
             shadowColor: "#d4d4d4",
@@ -53,7 +61,6 @@ const GoogleTextInput = ({
           key: googlePlacesApiKey,
           language: "en",
         }}
-        // Remove the search button by omitting the renderLeftButton
         textInputProps={{
           placeholderTextColor: "gray",
           placeholder: initialLocation ?? "Where do you want to go?",
