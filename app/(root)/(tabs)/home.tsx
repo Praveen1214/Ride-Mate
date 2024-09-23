@@ -43,8 +43,8 @@ const HomeScreen = () => {
 
       let location = await Location.getCurrentPositionAsync({});
       const address = await Location.reverseGeocodeAsync({
-        latitude: location.coords?.latitude!,
-        longitude: location.coords?.longitude!,
+        latitude: location.coords?.latitude,
+        longitude: location.coords?.longitude,
       });
 
       setUserLocation({
@@ -55,10 +55,16 @@ const HomeScreen = () => {
     })();
   }, []);
 
-  const handleNavigateToFindRide = () => {
-    router.push({
-      pathname: "/(root)/find-ride",
-    });
+  const handleNavigateToDrop = () => {
+    if (activeTab === "find") {
+      router.push({
+        pathname: "/(root)/find-ride",
+      });
+    } else {
+      router.push({
+        pathname: "/(root)/offer-ride",
+      });
+    }
   };
 
   return (
@@ -139,15 +145,18 @@ const HomeScreen = () => {
 
         <ScrollView>
           <View className="flex-row items-center justify-start">
-            <Text className="text-xs text-blue-500 w-20 font-medium ml-3">
+            <Text className="text-sm text-blue-500 w-20 font-bold ml-3">
               PICKUP
             </Text>
-            <TextInput
-              placeholder={userAddress}
-              placeholderTextColor="gray"
-              className="text-gray-700 flex-1 px-3 rounded ml-0"
-            />
+            <TouchableOpacity onPress={handleNavigateToDrop} className="flex-1">
+              <TextInput
+                placeholder={userAddress}
+                placeholderTextColor="gray"
+                className="text-sm font-bold text-gray-700 flex-1 px-3 rounded ml-0"
+              />
+            </TouchableOpacity>
           </View>
+
           <View className="absolute h-[1px] bg-gray-300 top-[38px] left-16 right-12" />
           <View className="mr-4 items-left ml-7 h-10">
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
@@ -156,15 +165,10 @@ const HomeScreen = () => {
           </View>
 
           <View className="flex-row mb-3 items-center pl-5">
-            <Text className="text-xs text-orange-500 w-20 font-medium">
-              DROP
-            </Text>
+            <Text className="text-sm text-orange-500 w-20 font-bold">DROP</Text>
 
-            <TouchableOpacity
-              onPress={handleNavigateToFindRide}
-              className="flex-1"
-            >
-              <Text className="text-gray-700 flex-1 px-3 rounded ml-0 mb-2 font-medium">
+            <TouchableOpacity onPress={handleNavigateToDrop} className="flex-1">
+              <Text className="text-sm text-gray-700 flex-1 px-3 rounded ml-0 mb-2 font-bold">
                 Where are you Drop?
               </Text>
             </TouchableOpacity>
@@ -176,3 +180,4 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
+``
