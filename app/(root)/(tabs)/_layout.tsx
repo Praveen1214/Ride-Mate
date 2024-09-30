@@ -7,13 +7,6 @@ const TabIcon = ({ name, focused, title }: { name: string; focused: boolean; tit
   return (
     <View style={{ alignItems: 'center', justifyContent: 'center' }}>
       <Icon name={name} size={24} color={focused ? "green" : "gray"} />
-      <Text style={{ 
-        fontSize: 10, 
-        color: focused ? "green" : "gray",
-        marginTop: Platform.OS === 'ios' ? 4 : 0 // Adjust spacing for iOS
-      }}>
-        {title}
-      </Text>
     </View>
   );
 };
