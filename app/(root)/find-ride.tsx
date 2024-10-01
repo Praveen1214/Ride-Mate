@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Platform,
   Modal,
-  Button,
   ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
@@ -15,18 +14,26 @@ import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import GoogleTextInput from "@/components/GoogleTextInput"; // Import the custom GoogleTextInput
+import { useLocationStore } from "@/store";
 
 const FindRideScreen = () => {
-  const [pickup, setPickup] = useState(null); // Updated to hold the location object
-  const [drop, setDrop] = useState(null); // Updated to hold the location object
-  const [date, setDate] = useState(new Date()); // Holds the selected date and time
-  const [showPicker, setShowPicker] = useState(false); // Controls visibility of DateTimePicker
+  const [pickup, setPickup] = useState(null);
+  const [drop, setDrop] = useState(null);
+  const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [isButtonPressed, setIsButtonPressed] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const navigation = useNavigation();
 
-  const handlePickupLocation = (location) => {
+  const {
+    userAddress,
+    destinationAddress,
+    setDestinationLocation,
+    setUserLocation,
+  } = useLocationStore();
+
+  const handlePickupLocation = (location: { latitude }) => {
     setPickup(location);
   };
 
@@ -38,7 +45,7 @@ const FindRideScreen = () => {
     const currentDate = selectedDate || date;
     setDate(currentDate);
     if (Platform.OS !== "ios") {
-      setShowPicker(false); // Close the picker immediately on Android
+      setShowPicker(false);
     }
   };
 
@@ -49,40 +56,22 @@ const FindRideScreen = () => {
   const baseColor = "#0C6C41";
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      {/* Hide StatusBar */}
+    <SafeAreaView className="flex-1 bg-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+        className="flex-1"
       >
         {/* Header */}
-        <View
-          style={{
-            backgroundColor: baseColor,
-            paddingVertical: 16,
-            paddingHorizontal: 16,
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
+        <View className="bg-[#0C6C41] py-4 px-4 flex-row items-center">
           {/* Back Arrow */}
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
-          <Text
-            style={{
-              color: "white",
-              fontSize: 20,
-              fontWeight: "bold",
-              marginLeft: 16,
-            }}
-          >
-            Find Ride
-          </Text>
+          <Text className="text-white text-xl font-bold ml-4">Find Ride</Text>
         </View>
 
-        <View className="bg-white rounded-lg shadow-md p-4 mt-4 m-4">
+        <View className="bg-white rounded-lg shadow-md p-4 mt-4 mx-4">
           {/* Pickup Section */}
           <View className="mb-2">
             <View className="flex-row items-center">
@@ -91,7 +80,7 @@ const FindRideScreen = () => {
               </Text>
               <GoogleTextInput
                 icon={null}
-                initialLocation={pickup ? pickup.address : null}
+                initialLocation={userAddress}
                 handlePress={handlePickupLocation}
                 textInputBackgroundColor="white"
                 containerStyle="flex-1"
@@ -99,7 +88,6 @@ const FindRideScreen = () => {
             </View>
           </View>
 
-          {/* Vertical Line between Pickup and Drop */}
           {/* Vertical Line between Pickup and Drop */}
           <View className="mr-4 items-left ml-5 h-10 p-0">
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
@@ -123,8 +111,9 @@ const FindRideScreen = () => {
             </View>
           </View>
         </View>
-        <ScrollView style={{ flex: 1, paddingHorizontal: 16 }}>
-          <View className="bg-white rounded-lg shadow-md p-4 mb-6 ">
+
+        <ScrollView className="flex-1 px-4">
+          <View className="bg-white rounded-lg shadow-md p-4 mb-6">
             <Text className="text-sm font-bold mb-2 text-[#0C6C41]">
               DATE AND TIME
             </Text>
@@ -150,7 +139,7 @@ const FindRideScreen = () => {
               animationType="slide"
               visible={showDatePicker}
             >
-              <View className="flex-1 justify-end  bg-opacity-50">
+              <View className="flex-1 justify-end bg-opacity-50">
                 <View className="bg-white rounded-t-xl">
                   <View className="flex-row justify-between items-center px-4 py-3 rounded-t-xl bg-[#0C6C41]">
                     <TouchableOpacity onPress={() => setShowDatePicker(false)}>
@@ -177,25 +166,25 @@ const FindRideScreen = () => {
 
           {/* Set Location on Map Button */}
           <TouchableOpacity
-            style={{
-              backgroundColor: "#E8F5E9",
-              padding: 16,
-              borderRadius: 8,
-              marginTop: 16,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className="bg-[#E8F5E9] py-4 rounded-lg mt-4 flex-row items-center justify-center"
           >
             <Ionicons
               name="map"
               size={24}
               color={baseColor}
-              style={{ marginRight: 8 }}
+              className="mr-2"
             />
-            <Text style={{ color: baseColor, fontWeight: "bold" }}>
+            <Text className="text-[#0C6C41] font-bold">
               SET LOCATION ON MAP
             </Text>
+          </TouchableOpacity>
+
+          {/* Find Ride Button */}
+          <TouchableOpacity
+            className="bg-[#0C6C41] py-4 rounded-lg mt-6 flex-row items-center justify-center"
+            onPress={() => setIsButtonPressed(true)}
+          >
+            <Text className="text-white font-bold">FIND RIDE</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
