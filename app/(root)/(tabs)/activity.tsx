@@ -1,304 +1,231 @@
-import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
-  FlatList,
-  Switch,
+  ScrollView,
+  SafeAreaView,
   StyleSheet,
+  StatusBar,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
 
-import {
-  ChevronLeftIcon,
-  MapPinIcon,
-  PhoneIcon,
-  ChatBubbleLeftIcon,
-  ClockIcon,
-  CurrencyDollarIcon,
-  MapIcon,
-  StarIcon,
-  AdjustmentsVerticalIcon,
-} from "react-native-heroicons/outline";
+type ActivityStatus = "Ongoing" | "Completed" | "Cancelled";
 
-interface RideRequest {
+interface Activity {
   id: string;
+  name: string;
+  date: string;
+  time: string;
   pickup: string;
   drop: string;
-  riderName: string;
-  estimatedEarnings: string;
-  distance: string;
-  duration: string;
-  passengerRating: number;
+  status: ActivityStatus;
+  amount: number;
+  rating?: number;
+  feedback?: string;
 }
 
-const rideRequests: RideRequest[] = [
-  {
-    id: "1",
-    pickup: "Anuradhapura",
-    drop: "Maradana",
-    riderName: "Ahmed Ali",
-    estimatedEarnings: "$25.00",
-    distance: "15.5 km",
-    duration: "25 min",
-    passengerRating: 4.7,
-  },
-  {
-    id: "2",
-    pickup: "Anuradhapura",
-    drop: "Colombo",
-    riderName: "Samantha Perera",
-    estimatedEarnings: "$35.00",
-    distance: "22 km",
-    duration: "40 min",
-    passengerRating: 4.9,
-  },
-];
-
-const baseColor = "#0C6C41";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F7F7F7",
+    backgroundColor: "#FFFFFF",
+    paddingTop: StatusBar.currentHeight,
   },
   header: {
+    backgroundColor: "#0C6C41",
+    padding: 20,
     flexDirection: "row",
-    alignItems: "center",
     justifyContent: "space-between",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0",
+    alignItems: "center",
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#333333",
-    letterSpacing: 0.15,
+  headerText: {
+    fontSize: 22,
+    color: "white",
+    fontWeight: "bold",
   },
-  currentRouteCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    margin: 16,
+  tabContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    backgroundColor: "#0C6C41",
+  },
+  tabButton: {
+    flex: 1,
+    paddingVertical: 12,
+    alignItems: "center",
+    borderBottomWidth: 4,
+    borderBottomColor: "transparent",
+  },
+  tabTextActive: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  tabTextInactive: {
+    color: "#ddd",
+    fontSize: 16,
+  },
+  activityCard: {
+    backgroundColor: "#f8f8f8",
+    padding: 20,
+    marginHorizontal: 10,
+    marginVertical: 5,
+    borderRadius: 10,
     shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 1.5,
+    elevation: 2,
   },
-  currentRouteTitle: {
+  activityHeader: {
     fontSize: 16,
-    fontWeight: "600",
-    color: "#333333",
-    marginBottom: 12,
-    letterSpacing: 0.1,
+    fontWeight: "bold",
   },
-  routeText: {
+  activityContent: {
+    marginTop: 5,
     fontSize: 16,
-    fontWeight: "500",
-    color: "#4A4A4A",
+    color: "#666",
   },
-  rideRequestCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+  button: {
+    padding: 10,
+    borderRadius: 5,
   },
-  earningsText: {
-    fontSize: 21,
-    fontWeight: "700",
-    color: baseColor,
-    letterSpacing: 0.25,
+  mapViewButton: {
+    backgroundColor: "#4CAF50",
+    marginTop: 10,
   },
-  ratingText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#F59E0B",
-    marginLeft: 4,
+  cancelButton: {
+    backgroundColor: "#FF5722",
+    marginTop: 10,
   },
-  locationLabel: {
-    fontSize: 10,
-    fontWeight: "500",
-    color: "#6B7280",
-    marginBottom: 4,
-    letterSpacing: 0.4,
-    textTransform: "uppercase",
-  },
-  locationText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#333333",
-    marginLeft: 8,
-    letterSpacing: 0.15,
-  },
-  infoText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#6B7280",
-    letterSpacing: 0.1,
-  },
-  actionButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: "#F0F0F0",
-  },
-  switchLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#4A4A4A",
-    letterSpacing: 0.1,
-  },
-  emptyStateText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#6B7280",
+  buttonText: {
     textAlign: "center",
-    marginTop: 24,
-    letterSpacing: 0.15,
+    color: "white",
+  },
+  starStyle: {
+    color: "#FFD700",
   },
 });
 
-const Requests: React.FC = () => {
-  const [showLongDistanceOnly, setShowLongDistanceOnly] = useState(false);
-
-  const filteredRequests = showLongDistanceOnly
-    ? rideRequests.filter((request) => parseFloat(request.distance) > 20)
-    : rideRequests;
-
-  const renderRideRequest = ({ item }: { item: RideRequest }) => (
-    <TouchableOpacity style={[styles.rideRequestCard, styles.shadow]}>
-      {/* Earnings and Rating Section */}
-      <View className="flex-row justify-between items-center mb-4">
-        <Text style={[styles.earningsText, styles.highlightText]}>
-          {item.estimatedEarnings}
+const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
+  return (
+    <View style={styles.activityCard}>
+      <Text style={styles.activityHeader}>
+        {activity.name} - {activity.status}
+      </Text>
+      <Text style={styles.activityContent}>
+        {activity.pickup} to {activity.drop}
+      </Text>
+      <Text style={styles.activityContent}>
+        Date: {activity.date} - Time: {activity.time}
+      </Text>
+      <Text style={styles.activityContent}>
+        Amount: Rs {activity.amount.toFixed(2)}
+      </Text>
+      {activity.rating && (
+        <Text style={styles.activityContent}>
+          Rating: {"★".repeat(activity.rating)}
         </Text>
-        <View className="flex-row items-center">
-          <StarIcon size={18} color="#FFD700" />
-          <Text style={styles.ratingText}>
-            {item.passengerRating.toFixed(1)}
-          </Text>
-        </View>
-      </View>
-
-      {/* Pickup and Drop-off Section */}
-      <View className="mb-2">
-        <View className="mb-3">
-          <Text style={styles.locationLabel}>Pickup Location</Text>
-          <View className="flex-row items-center">
-            <MapPinIcon size={22} color={baseColor} />
-            <Text style={styles.locationText}>{item.pickup}</Text>
-          </View>
-        </View>
-        <View>
-          <Text style={styles.locationLabel}>Drop-off Location</Text>
-          <View className="flex-row items-center">
-            <MapPinIcon size={22} color="#FF6B6B" />
-            <Text style={styles.locationText}>{item.drop}</Text>
-          </View>
-        </View>
-      </View>
-
-      {/* Distance and Duration Section */}
-      <View className="flex-row justify-between items-center">
-        <View className="flex-row items-center">
-          <Text style={styles.infoText}>{item.distance}</Text>
-          <Text style={[styles.infoText, { marginLeft: 12 }]}>
-            {item.duration}
-          </Text>
-        </View>
-
-        {/* Action Buttons (Call and Chat) */}
-        <View className="flex-row space-x-4">
-          <TouchableOpacity style={styles.actionButton}>
-            <PhoneIcon size={22} color={baseColor} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <ChatBubbleLeftIcon size={22} color={baseColor} />
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
+      )}
+      {activity.feedback && (
+        <Text style={styles.activityContent}>
+          Feedback: {activity.feedback}
+        </Text>
+      )}
+      {activity.status === "Ongoing" && (
+        <TouchableOpacity style={[styles.button, styles.mapViewButton]}>
+          <Text style={styles.buttonText}>Map View</Text>
+        </TouchableOpacity>
+      )}
+      {activity.status === "Ongoing" && (
+        <TouchableOpacity style={[styles.button, styles.cancelButton]}>
+          <Text style={styles.buttonText}>Cancel Ride</Text>
+        </TouchableOpacity>
+      )}
+    </View>
   );
+};
+
+const RideSharingActivity: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<ActivityStatus>("Ongoing");
+
+  const activities: Activity[] = [
+    {
+      id: "1",
+      name: "Dileepa",
+      date: "26 Jul 2024",
+      time: "10:30 PM",
+      pickup: "Anuradhapura",
+      drop: "Colombo",
+      status: "Ongoing",
+      amount: 1500.0,
+      rating: 4,
+    },
+    {
+      id: "2",
+      name: "Praveen",
+      date: "27 Jul 2024",
+      time: "11:00 AM",
+      pickup: "Colombo",
+      drop: "Kandy",
+      status: "Completed",
+      amount: 800.0,
+      rating: 5,
+      feedback: "Very prompt and polite.",
+    },
+    {
+      id: "3",
+      name: "Chamara",
+      date: "28 Jul 2024",
+      time: "02:00 PM",
+      pickup: "Galle",
+      drop: "Matara",
+      status: "Cancelled",
+      amount: 0.0,
+      feedback: "Cancelled due to weather conditions.",
+    },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity>
-          <ChevronLeftIcon size={24} color={baseColor} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Available Rides</Text>
-        <TouchableOpacity>
-          <AdjustmentsVerticalIcon size={24} color={baseColor} />
-        </TouchableOpacity>
+        <Text style={styles.headerText}>Your Activities</Text>
+        <Ionicons name="menu" size={28} color="white" />
       </View>
 
-      <View style={styles.currentRouteCard}>
-        <Text style={styles.currentRouteTitle}>Current Route</Text>
-        <View className="flex-row items-center mb-4">
-          <View className="flex-row items-center space-x-2">
-            <MapPinIcon size={22} color={baseColor} />
-            <Text style={styles.routeText}>Anuradhapura</Text>
-          </View>
-          <View className="h-1 w-12 bg-gray-300 mx-2" />
-          <View className="flex-row items-center space-x-2">
-            <MapPinIcon size={22} color="#FF6B6B" />
-            <Text style={styles.routeText}>Colombo</Text>
-          </View>
-        </View>
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#E8F5E9",
-            padding: 16,
-            borderRadius: 8,
-            marginTop: 16,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Ionicons
-            name="map"
-            size={24}
-            color={baseColor}
-            style={{ marginRight: 8 }}
-          />
-          <Text style={{ color: baseColor, fontWeight: "bold" }}>
-            VIEW LOCATION ON MAP
-          </Text>
-        </TouchableOpacity>
+      <View style={styles.tabContainer}>
+        {["Ongoing", "Completed", "Cancelled"].map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            onPress={() => {
+              setActiveTab(tab as ActivityStatus);
+            }}
+            style={[
+              styles.tabButton,
+              activeTab === tab ? { borderBottomColor: "#ffffff" } : {},
+            ]}
+          >
+            <Text
+              style={
+                activeTab === tab
+                  ? styles.tabTextActive
+                  : styles.tabTextInactive
+              }
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
 
-      <View className="flex-row justify-between items-center px-4 mb-4">
-        <Text style={styles.switchLabel}>Long distance only</Text>
-        <Switch
-          value={showLongDistanceOnly}
-          onValueChange={setShowLongDistanceOnly}
-          trackColor={{ false: "#767577", true: "#81b0ff" }}
-          thumbColor={showLongDistanceOnly ? baseColor : "#f4f3f4"}
-        />
-      </View>
-
-      <FlatList
-        data={filteredRequests}
-        renderItem={renderRideRequest}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
-        ListEmptyComponent={
-          <Text style={styles.emptyStateText}>
-            No ride requests available at the moment.
-          </Text>
-        }
-      />
+      <ScrollView>
+        {activities
+          .filter((activity) => activity.status === activeTab)
+          .map((activity) => (
+            <ActivityCard key={activity.id} activity={activity} />
+          ))}
+      </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default Requests;
+export default RideSharingActivity;

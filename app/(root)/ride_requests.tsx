@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   View,
@@ -8,6 +9,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
 import {
   ChevronLeftIcon,
   MapPinIcon,
@@ -252,22 +254,23 @@ const Requests: React.FC = () => {
         </View>
         <TouchableOpacity
           style={{
-            backgroundColor: baseColor,
+            backgroundColor: "#E8F5E9",
+            padding: 16,
             borderRadius: 8,
-            paddingVertical: 12,
-            paddingHorizontal: 16,
+            marginTop: 16,
+            flexDirection: "row",
             alignItems: "center",
+            justifyContent: "center",
           }}
         >
-          <Text
-            style={{
-              color: "#FFFFFF",
-              fontWeight: "600",
-              fontSize: 16,
-              letterSpacing: 0.5,
-            }}
-          >
-            View on Map
+          <Ionicons
+            name="map"
+            size={24}
+            color={baseColor}
+            style={{ marginRight: 8 }}
+          />
+          <Text style={{ color: baseColor, fontWeight: "bold" }}>
+            VIEW LOCATION ON MAP
           </Text>
         </TouchableOpacity>
       </View>

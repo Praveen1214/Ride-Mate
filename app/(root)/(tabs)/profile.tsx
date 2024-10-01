@@ -38,13 +38,13 @@ const Profile = () => {
   });
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
-      <ScrollView>
+    <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
+      <ScrollView className='bg-white'>
         <View className="bg-[#0C6C41] p-4">
-          <Text className="text-xl font-bold text-white">Profile</Text>
+          <Text className="text-2xl font-bold text-white">Profile</Text>
         </View>
         
-        <View className="p-3">
+        <View className="p-6">
           <Text className="text-lg font-bold mb-3">Your Info</Text>
           <ProfileItem icon="person-outline" label="Full Name" value={userData.fullName} />
           <ProfileItem icon="mail-outline" label="Email Address" value={userData.email} />
@@ -53,7 +53,7 @@ const Profile = () => {
           <ProfileItem icon="male-female-outline" label="Gender" value={userData.gender} />
         </View>
         
-        <View className="p-3">
+        <View className="p-6">
           <Text className="text-lg font-bold mb-3">Emergency Contact</Text>
           <View className={`flex-row ${platformSpecificStyle}`}>
             <EmergencyContact icon="shield-outline" label="Police" value="119" />
@@ -61,7 +61,7 @@ const Profile = () => {
           </View>
         </View>
         
-        <TouchableOpacity className="bg-white border border-[#0C6C41] mx-3 my-4 p-3 rounded-lg">
+        <TouchableOpacity className="bg-white border border-[#0C6C41] mx-3 my-4 p-3 m-6 rounded-lg">
           <Text className="text-[#0C6C41] font-bold text-center text-base">Log Out</Text>
         </TouchableOpacity>
       </ScrollView>
