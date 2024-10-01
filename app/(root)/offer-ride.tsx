@@ -155,49 +155,48 @@ const OfferRideScreen = () => {
           <Text className="text-white text-xl font-bold">Offer Ride</Text>
         </View>
 
-        <ScrollView className="flex-1 px-4">
-          <View className="bg-white rounded-lg shadow-md p-4 mt-4 mb-6">
-            {/* Pickup Section */}
-            <View className="mb-2">
-              <View className="flex-row items-center">
-                <Text className="text-sm text-blue-500 w-20 font-bold">
-                  PICKUP
-                </Text>
-                <GoogleTextInput
-                  icon={null}
-                  initialLocation={pickup ? pickup.address : null}
-                  handlePress={handlePickupLocation}
-                  textInputBackgroundColor="white"
-                  containerStyle="flex-1"
-                />
-              </View>
-            </View>
-
-            {/* Vertical Line between Pickup and Drop */}
-            {/* Vertical Line between Pickup and Drop */}
-            <View className="mr-4 items-left ml-5 h-10 p-0">
-              <View className="w-2 h-2 bg-gray-400 rounded-full" />
-              <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
-              <View className="w-2 h-2 bg-gray-400 rounded-full" />
-            </View>
-
-            {/* Drop Section */}
-            <View>
-              <View className="flex-row items-center">
-                <Text className="text-sm text-orange-500 w-20 font-bold">
-                  DROP
-                </Text>
-                <GoogleTextInput
-                  icon={null}
-                  initialLocation={drop ? drop.address : null}
-                  handlePress={handleDropLocation}
-                  textInputBackgroundColor="white"
-                  containerStyle="flex-1"
-                />
-              </View>
+        <View className="bg-white rounded-lg shadow-md p-4 mt-4 m-4">
+          {/* Pickup Section */}
+          <View className="mb-2">
+            <View className="flex-row items-center">
+              <Text className="text-sm text-blue-500 w-20 font-bold">
+                PICKUP
+              </Text>
+              <GoogleTextInput
+                icon={null}
+                initialLocation={pickup ? pickup.address : null}
+                handlePress={handlePickupLocation}
+                textInputBackgroundColor="white"
+                containerStyle="flex-1"
+              />
             </View>
           </View>
 
+          {/* Vertical Line between Pickup and Drop */}
+          {/* Vertical Line between Pickup and Drop */}
+          <View className="mr-4 items-left ml-5 h-10 p-0">
+            <View className="w-2 h-2 bg-gray-400 rounded-full" />
+            <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
+            <View className="w-2 h-2 bg-gray-400 rounded-full" />
+          </View>
+
+          {/* Drop Section */}
+          <View>
+            <View className="flex-row items-center">
+              <Text className="text-sm text-orange-500 w-20 font-bold">
+                DROP
+              </Text>
+              <GoogleTextInput
+                icon={null}
+                initialLocation={drop ? drop.address : null}
+                handlePress={handleDropLocation}
+                textInputBackgroundColor="white"
+                containerStyle="flex-1"
+              />
+            </View>
+          </View>
+        </View>
+        <ScrollView className="flex-1 px-4">
           <View className="bg-white rounded-lg shadow-md p-4 mb-6 ">
             <Text className="text-sm font-bold mb-2 text-[#0C6C41]">
               DATE AND TIME
@@ -212,7 +211,9 @@ const OfferRideScreen = () => {
                 color={baseColor}
                 className="mr-2"
               />
-              <Text className="text-gray-700 ml-4">{date.toLocaleString()}</Text>
+              <Text className="text-gray-700 ml-4">
+                {date.toLocaleString()}
+              </Text>
             </TouchableOpacity>
           </View>
 

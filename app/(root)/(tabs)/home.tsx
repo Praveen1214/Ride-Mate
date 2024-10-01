@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Keyboard,
+  Platform,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 
@@ -25,6 +26,16 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("find");
   const [hasPermission, setHasPermission] = useState(false);
+
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-4",
+    android: "mb-2",
+  });
+
+  const dividerStyle = Platform.select({
+    ios: 'absolute h-[1px] bg-gray-300 top-[40px] left-16 right-12',
+    android: 'absolute h-[1px] bg-gray-300 top-[43px] left-16 right-12',
+  });
 
   const {
     userAddress,
@@ -77,29 +88,58 @@ const HomeScreen = () => {
       </View>
 
       {/* Header */}
-      <View className="absolute top-12 left-0 right-0 bg-white px-4 py-2 flex-row justify-between items-center">
-        <View className="flex-row items-center">
-          <View className="w-9 h-9 bg-black rounded-full items-center justify-center">
-            <Text className="text-white text-lg font-bold">JD</Text>
+      <View
+        style={{
+          position: "absolute",
+          top: Platform.OS === "ios" ? 45 : 25,
+          left: 0,
+          right: 0,
+          backgroundColor: "white",
+          paddingHorizontal: 16,
+          paddingVertical: 12,
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center" }}>
+          <View
+            style={{
+              width: 36,
+              height: 36,
+              backgroundColor: "black",
+              shadowColor: "#000",
+              borderRadius: 18,
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
+              JD
+            </Text>
           </View>
-          <View className="flex-col ml-3">
-            <Text className="text-m font-semibold leading-6">
+          <View style={{ marginLeft: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: "600" }}>
               Welcome! Praveen
             </Text>
-            <Text className="text-sm text-gray-600 leading-4">Malabe</Text>
+            <Text style={{ fontSize: 14, color: "gray" }}>Malabe</Text>
           </View>
         </View>
-        <View className="w-6 h-6 items-center justify-center">
-          <Icon name="bell" size={20} color="#000" />
-        </View>
+        <Icon name="bell" size={20} color="#000" />
       </View>
 
       {/* Ride Form */}
       <View
         className="absolute bottom-16 left-4 right-4 bg-white rounded-xl mb-8 shadow-md"
-        style={{ elevation: 5 }}
+        style={{
+          elevation: 5,
+          bottom: Platform.OS === "ios" ? 60 : 40,
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+        }}
       >
-        <View className="flex-row mb-4">
+        <View className={`flex-row ${platformSpecificStyle}`}>
           <TouchableOpacity
             className={`flex-1 py-3 flex-row justify-center items-center ${
               activeTab === "find" ? "bg-[#0C6C41]" : "bg-gray-200"
@@ -143,7 +183,7 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <ScrollView>
+        <ScrollView className="px-2">
           <View className="flex-row items-center justify-start">
             <Text className="text-sm text-blue-500 w-20 font-bold ml-3">
               PICKUP
@@ -157,7 +197,7 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
 
-          <View className="absolute h-[1px] bg-gray-300 top-[38px] left-16 right-12" />
+          <View className={dividerStyle} />
           <View className="mr-4 items-left ml-7 h-10">
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
             <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
@@ -168,7 +208,7 @@ const HomeScreen = () => {
             <Text className="text-sm text-orange-500 w-20 font-bold">DROP</Text>
 
             <TouchableOpacity onPress={handleNavigateToDrop} className="flex-1">
-              <Text className="text-sm text-gray-700 flex-1 px-3 rounded ml-0 mb-2 font-bold">
+              <Text className="text-sm text-gray-700 flex-1 px-3 rounded ml-0 mb-0 font-bold">
                 Where are you Drop?
               </Text>
             </TouchableOpacity>
@@ -180,4 +220,3 @@ const HomeScreen = () => {
 };
 
 export default HomeScreen;
-``

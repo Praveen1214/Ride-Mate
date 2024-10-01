@@ -43,7 +43,7 @@ const FindRideScreen = () => {
   };
 
   const handleConfirmDate = () => {
-    setShowPicker(false);
+    setShowDatePicker(false);
   };
 
   const baseColor = "#0C6C41";
@@ -78,111 +78,52 @@ const FindRideScreen = () => {
               marginLeft: 16,
             }}
           >
-            Offer Ride
+            Find Ride
           </Text>
         </View>
 
-        <ScrollView style={{ flex: 1, paddingHorizontal: 16 }}>
-          <View
-            style={{
-              backgroundColor: "white",
-              borderRadius: 8,
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.1,
-              padding: 16,
-              marginTop: 16,
-              marginBottom: 24,
-            }}
-          >
-            {/* Pickup and Drop Form */}
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ flex: 1 }}>
-                {/* Pickup Section */}
-                <View style={{ marginBottom: 4}}>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: "#1E90FF",
-                        width: 80,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      PICKUP
-                    </Text>
-                    <GoogleTextInput
-                      icon={null}
-                      initialLocation={pickup ? pickup.address : null}
-                      handlePress={handlePickupLocation}
-                      textInputBackgroundColor="white"
-                      containerStyle={{ flex: 1 }}
-                    />
-                  </View>
-                </View>
-
-                {/* Vertical Line between Pickup and Drop */}
-                <View
-                  style={{
-                    marginRight: 10,
-                    alignItems: "flex-start",
-                    marginLeft: 20,
-                    height: 40,
-                    padding: 0,
-                  }}
-                >
-                  <View
-                    style={{
-                      width: 8,
-                      height: 8,
-                      backgroundColor: "#C0C0C0",
-                      borderRadius: 50,
-                    }}
-                  />
-                  <View
-                    style={{
-                      width: 1,
-                      flex: 1,
-                      backgroundColor: "#C0C0C0",
-                      marginVertical: 4,
-                    }}
-                  />
-                  <View
-                    style={{
-                      width: 8,
-                      height: 8,
-                      backgroundColor: "#C0C0C0",
-                      borderRadius: 50,
-                    }}
-                  />
-                </View>
-
-                {/* Drop Section */}
-                <View>
-                  <View style={{ flexDirection: "row", alignItems: "center" }}>
-                    <Text
-                      style={{
-                        fontSize: 14,
-                        color: "#FFA500",
-                        width: 80,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      DROP
-                    </Text>
-                    <GoogleTextInput
-                      icon={null}
-                      initialLocation={drop ? drop.address : null}
-                      handlePress={handleDropLocation}
-                      textInputBackgroundColor="white"
-                      containerStyle={{ flex: 1 }}
-                    />
-                  </View>
-                </View>
-              </View>
+        <View className="bg-white rounded-lg shadow-md p-4 mt-4 m-4">
+          {/* Pickup Section */}
+          <View className="mb-2">
+            <View className="flex-row items-center">
+              <Text className="text-sm text-blue-500 w-20 font-bold">
+                PICKUP
+              </Text>
+              <GoogleTextInput
+                icon={null}
+                initialLocation={pickup ? pickup.address : null}
+                handlePress={handlePickupLocation}
+                textInputBackgroundColor="white"
+                containerStyle="flex-1"
+              />
             </View>
           </View>
 
+          {/* Vertical Line between Pickup and Drop */}
+          {/* Vertical Line between Pickup and Drop */}
+          <View className="mr-4 items-left ml-5 h-10 p-0">
+            <View className="w-2 h-2 bg-gray-400 rounded-full" />
+            <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
+            <View className="w-2 h-2 bg-gray-400 rounded-full" />
+          </View>
+
+          {/* Drop Section */}
+          <View>
+            <View className="flex-row items-center">
+              <Text className="text-sm text-orange-500 w-20 font-bold">
+                DROP
+              </Text>
+              <GoogleTextInput
+                icon={null}
+                initialLocation={drop ? drop.address : null}
+                handlePress={handleDropLocation}
+                textInputBackgroundColor="white"
+                containerStyle="flex-1"
+              />
+            </View>
+          </View>
+        </View>
+        <ScrollView style={{ flex: 1, paddingHorizontal: 16 }}>
           <View className="bg-white rounded-lg shadow-md p-4 mb-6 ">
             <Text className="text-sm font-bold mb-2 text-[#0C6C41]">
               DATE AND TIME
@@ -235,9 +176,24 @@ const FindRideScreen = () => {
           )}
 
           {/* Set Location on Map Button */}
-          <TouchableOpacity className="bg-[#E8F5E9] p-4 rounded-lg mb-6 flex-row items-center justify-center">
-            <Ionicons name="map" size={24} color={baseColor} className="mr-2" />
-            <Text className="text-[#0C6C41] font-semibold ml-4">
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#E8F5E9",
+              padding: 16,
+              borderRadius: 8,
+              marginTop: 16,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Ionicons
+              name="map"
+              size={24}
+              color={baseColor}
+              style={{ marginRight: 8 }}
+            />
+            <Text style={{ color: baseColor, fontWeight: "bold" }}>
               SET LOCATION ON MAP
             </Text>
           </TouchableOpacity>
