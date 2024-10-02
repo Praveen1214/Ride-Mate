@@ -1,8 +1,8 @@
-import React, { useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -62,7 +62,7 @@ const OfferRideScreen = () => {
     setValue,
     placeholder,
     keyboardType = "default",
-    icon
+    icon,
   ) => (
     <View className="mb-6">
       <Text className="text-sm font-bold mb-2 text-[#0C6C41]">{label}</Text>
@@ -89,7 +89,7 @@ const OfferRideScreen = () => {
     items,
     showPicker,
     setShowPicker,
-    icon
+    icon,
   ) => (
     <View className="mb-6">
       <Text className="text-sm font-bold mb-2 text-[#0C6C41] ">{label}</Text>
@@ -261,7 +261,7 @@ const OfferRideScreen = () => {
             setPrice,
             "Enter price",
             "numeric",
-            "cash"
+            "cash",
           )}
 
           {renderPicker(
@@ -277,7 +277,7 @@ const OfferRideScreen = () => {
             ],
             showVehiclePicker,
             setShowVehiclePicker,
-            "car"
+            "car",
           )}
 
           {renderInputField(
@@ -286,7 +286,7 @@ const OfferRideScreen = () => {
             setAvailableSeats,
             "Enter available seats",
             "numeric",
-            "people"
+            "people",
           )}
 
           {renderPicker(
@@ -301,7 +301,7 @@ const OfferRideScreen = () => {
             ],
             showLuggagePicker,
             setShowLuggagePicker,
-            "briefcase"
+            "briefcase",
           )}
 
           {renderInputField(
@@ -310,7 +310,7 @@ const OfferRideScreen = () => {
             setFacilities,
             "Enter Your Vehicle facilities",
             "default",
-            "options"
+            "options",
           )}
 
           <TouchableOpacity className="bg-[#0C6C41] p-4 rounded-lg mb-8 mt-3">

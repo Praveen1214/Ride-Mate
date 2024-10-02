@@ -1,7 +1,7 @@
+import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { Text, View, TouchableOpacity, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Ionicons } from "@expo/vector-icons";
 
 const ProfileItem = ({ icon, label, value }) => (
   <View className="flex-row items-center py-4 border-b border-gray-200">
@@ -78,13 +78,12 @@ const Profile = () => {
           />
           <ProfileItem icon="male-female-outline" label="Gender" value="Male" />
         </View>
+        <TouchableOpacity className="bg-white border border-[#0C6C41] mx-4 my-6 p-4 rounded-lg">
+          <Text className="text-[#0C6C41] font-bold text-center text-lg">
+            Log Out
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
-
-      <TouchableOpacity className="bg-white border border-[#0C6C41] mx-4 my-6 p-4 rounded-lg">
-        <Text className="text-[#0C6C41] font-bold text-center text-lg">
-          Log Out
-        </Text>
-      </TouchableOpacity>
     </SafeAreaView>
   );
 };

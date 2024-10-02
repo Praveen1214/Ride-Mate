@@ -30,8 +30,8 @@ const HomeScreen = () => {
   });
 
   const dividerStyle = Platform.select({
-    ios: 'absolute h-[1px] bg-gray-300 top-[40px] left-16 right-12',
-    android: 'absolute h-[1px] bg-gray-300 top-[43px] left-16 right-12',
+    ios: "absolute h-[1px] bg-gray-300 top-[40px] left-16 right-12",
+    android: "absolute h-[1px] bg-gray-300 top-[43px] left-16 right-12",
   });
 
   const {
@@ -64,7 +64,12 @@ const HomeScreen = () => {
     })();
   }, []);
 
-  const handleNavigateToDrop = () => {
+  const handleNavigateToDrop = (location: {
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setDestinationLocation(location);
     if (activeTab === "find") {
       router.push({
         pathname: "/(root)/find-ride",
@@ -77,7 +82,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       {/* Map View */}
