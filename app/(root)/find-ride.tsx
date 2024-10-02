@@ -57,8 +57,15 @@ const FindRideScreen = () => {
 
   const baseColor = "#0C6C41";
 
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-4",
+    android: "mt-2 mb-2",
+  });
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView
+      className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}
+    >
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
