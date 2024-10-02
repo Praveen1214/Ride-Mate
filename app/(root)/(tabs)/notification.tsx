@@ -1,6 +1,13 @@
-import React from "react";
-import { View, Text, ScrollView, TouchableOpacity, SafeAreaView, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  SafeAreaView,
+  StatusBar,
+} from "react-native";
 
 interface Notification {
   id: string;
@@ -11,7 +18,9 @@ interface Notification {
   read: boolean;
 }
 
-const NotificationItem: React.FC<{ notification: Notification }> = ({ notification }) => {
+const NotificationItem: React.FC<{ notification: Notification }> = ({
+  notification,
+}) => {
   const getIconName = (type: string) => {
     switch (type) {
       case "info":
@@ -44,12 +53,22 @@ const NotificationItem: React.FC<{ notification: Notification }> = ({ notificati
         notification.read ? "opacity-60" : ""
       }`}
     >
-      <View className={`bg-${getIconColor(notification.type)}-100 rounded-full p-2 mr-3`}>
-        <Ionicons name={getIconName(notification.type)} size={24} color={getIconColor(notification.type)} />
+      <View
+        className={`bg-${getIconColor(notification.type)}-100 rounded-full p-2 mr-3`}
+      >
+        <Ionicons
+          name={getIconName(notification.type)}
+          size={24}
+          color={getIconColor(notification.type)}
+        />
       </View>
       <View className="flex-1">
-        <Text className="text-base font-semibold text-gray-800">{notification.title}</Text>
-        <Text className="text-sm text-gray-600 mt-1">{notification.message}</Text>
+        <Text className="text-base font-semibold text-gray-800">
+          {notification.title}
+        </Text>
+        <Text className="text-sm text-gray-600 mt-1">
+          {notification.message}
+        </Text>
         <Text className="text-xs text-gray-400 mt-1">{notification.time}</Text>
       </View>
       {!notification.read && (
@@ -96,18 +115,20 @@ const NotificationScreen: React.FC = () => {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
       <StatusBar barStyle="light-content" backgroundColor="#0C6C41" />
-      <View className="bg-[#0C6C41] p-6">
+      <View className="bg-[#0C6C41] p-4">
         <Text className="text-2xl font-bold text-white">Notifications</Text>
       </View>
-      <ScrollView className="flex-1">
+      <ScrollView className="h-full bg-white">
         {notifications.map((notification) => (
           <NotificationItem key={notification.id} notification={notification} />
         ))}
       </ScrollView>
-      <TouchableOpacity className="bg-[#0C6C41] m-4 p-3 mb-14 rounded-full">
-        <Text className="text-white text-center font-semibold">Mark all as read</Text>
+      <TouchableOpacity className="m-4 p-3 mb-14 rounded-full">
+        <Text className="text-white text-center font-semibold">
+          Mark all as read
+        </Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

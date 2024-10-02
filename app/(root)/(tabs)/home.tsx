@@ -15,9 +15,6 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-
-import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import { useLocationStore } from "@/store";
 
@@ -34,8 +31,8 @@ const HomeScreen = () => {
   });
 
   const dividerStyle = Platform.select({
-    ios: 'absolute h-[1px] bg-gray-300 top-[40px] left-16 right-12',
-    android: 'absolute h-[1px] bg-gray-300 top-[43px] left-16 right-12',
+    ios: "absolute h-[1px] bg-gray-300 top-[40px] left-16 right-12",
+    android: "absolute h-[1px] bg-gray-300 top-[43px] left-16 right-12",
   });
 
   const {
@@ -52,6 +49,7 @@ const HomeScreen = () => {
         setHasPermission(false);
         return;
       }
+      setHasPermission(true);
 
       let location = await Location.getCurrentPositionAsync({});
       const address = await Location.reverseGeocodeAsync({
@@ -67,7 +65,7 @@ const HomeScreen = () => {
     })();
   }, []);
 
-  const handleNavigateToDrop = (location:{
+  const handleNavigateToDrop = (location: {
     latitude: number;
     longitude: number;
     address: string;
@@ -85,7 +83,7 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
 
@@ -132,7 +130,7 @@ const HomeScreen = () => {
             <Text style={{ fontSize: 14, color: "gray" }}>Malabe</Text>
           </View>
         </View>
-        <Icon name="bell" size={20} color="#000" />
+        <Ionicons name="notifications-outline" size={20} color="#000" />
 
       </View>
 
@@ -150,11 +148,14 @@ const HomeScreen = () => {
 
       >
         <View className={`flex-row ${platformSpecificStyle}`}>
-          <TouchableOpacity
+          <TouchableOpacity 
             className={`flex-1 py-3 flex-row justify-center items-center ${
               activeTab === "find" ? "bg-[#0C6C41]" : "bg-gray-200"
             } rounded-l-md`}
-            onPress={() => setActiveTab("find")}
+            onPress={() => {
+              setActiveTab("find");
+              router.push("/search_ride");
+            }}
           >
             <Ionicons
               name="location-outline"

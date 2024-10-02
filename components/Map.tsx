@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps"; // Correct import
+import MapViewDirections from "react-native-maps-directions";
+
+import { icons } from "@/constants"; // Ensure icons are imported correctly
 import { calculateRegion, generateMarkersFromData } from "@/lib/map";
 import { useDriverStore, useLocationStore } from "@/store";
-import MapView, { Marker, PROVIDER_DEFAULT } from "react-native-maps"; // Correct import
-import { icons } from "@/constants"; // Ensure icons are imported correctly
-import MapViewDirections from "react-native-maps-directions";
 
 const Map = () => {
   const {
