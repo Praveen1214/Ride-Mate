@@ -14,9 +14,6 @@ import {
   Keyboard,
   Platform,
 } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
-
-import GoogleTextInput from "@/components/GoogleTextInput";
 import Map from "@/components/Map";
 import { useLocationStore } from "@/store";
 
@@ -51,6 +48,7 @@ const HomeScreen = () => {
         setHasPermission(false);
         return;
       }
+      setHasPermission(true);
 
       let location = await Location.getCurrentPositionAsync({});
       const address = await Location.reverseGeocodeAsync({
@@ -130,7 +128,7 @@ const HomeScreen = () => {
             <Text style={{ fontSize: 14, color: "gray" }}>Malabe</Text>
           </View>
         </View>
-        <Icon name="bell" size={20} color="#000" />
+        <Ionicons name="notifications-outline" size={20} color="#000" />
       </View>
 
       {/* Ride Form */}
@@ -145,11 +143,14 @@ const HomeScreen = () => {
         }}
       >
         <View className={`flex-row ${platformSpecificStyle}`}>
-          <TouchableOpacity
+          <TouchableOpacity 
             className={`flex-1 py-3 flex-row justify-center items-center ${
               activeTab === "find" ? "bg-[#0C6C41]" : "bg-gray-200"
             } rounded-l-md`}
-            onPress={() => setActiveTab("find")}
+            onPress={() => {
+              setActiveTab("find");
+              router.push("/search_ride");
+            }}
           >
             <Ionicons
               name="location-outline"
