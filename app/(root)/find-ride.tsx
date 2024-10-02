@@ -16,6 +16,7 @@ import {
 
 import GoogleTextInput from "@/components/GoogleTextInput"; // Import the custom GoogleTextInput
 import { useLocationStore } from "@/store";
+import { router } from "expo-router";
 
 const FindRideScreen = () => {
   const [pickup, setPickup] = useState(null);
@@ -176,7 +177,10 @@ const FindRideScreen = () => {
           {/* Find Ride Button */}
           <TouchableOpacity
             className="bg-[#0C6C41] py-4 rounded-lg mt-6 flex-row items-center justify-center"
-            onPress={() => setIsButtonPressed(true)}
+            onPress={() => {
+              setIsButtonPressed(true);
+              router.push("/search_ride");
+            }}
           >
             <Text className="text-white font-bold">FIND RIDE</Text>
           </TouchableOpacity>
