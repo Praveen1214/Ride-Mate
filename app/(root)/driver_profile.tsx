@@ -78,13 +78,14 @@ const Profile = () => {
           />
           <ProfileItem icon="male-female-outline" label="Gender" value="Male" />
         </View>
-      </ScrollView>
-
-      <TouchableOpacity className="bg-white border border-[#0C6C41] mx-4 my-6 p-4 rounded-lg">
+        <TouchableOpacity className="bg-white border border-[#0C6C41] mx-4 my-6 p-4 rounded-lg">
         <Text className="text-[#0C6C41] font-bold text-center text-lg">
           Log Out
         </Text>
       </TouchableOpacity>
+      </ScrollView>
+
+      
     </SafeAreaView>
   );
 };

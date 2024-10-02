@@ -1,5 +1,8 @@
 import { create } from "zustand";
 
+import { DriverStore, LocationStore, MarkerData } from "@/types/type";
+
+
 export const useLocationStore = create<LocationStore>((set) => ({
   userLatitude: null,
   userLongitude: null,
@@ -38,4 +41,13 @@ export const useLocationStore = create<LocationStore>((set) => ({
       destinationAddress: address,
     }));
   },
+}));
+
+export const useDriverStore = create<DriverStore>((set) => ({
+  drivers: [] as MarkerData[],
+  selectedDriver: null,
+  setSelectedDriver: (driverId: number) =>
+    set(() => ({ selectedDriver: driverId })),
+  setDrivers: (drivers: MarkerData[]) => set(() => ({ drivers })),
+  clearSelectedDriver: () => set(() => ({ selectedDriver: null })),
 }));
