@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { View, ActivityIndicator, Image } from 'react-native';
-import { useTailwind } from 'nativewind';
+import { useTailwind } from "nativewind";
+import React, { useEffect, useState } from "react";
+import { View, ActivityIndicator, Image } from "react-native";
 
 const SplashScreen: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -19,8 +19,8 @@ const SplashScreen: React.FC = () => {
       {loading ? (
         <>
           {/* Logo Image */}
-          <Image 
-            source={require('@/assets/images/logo.png')} // Replace with your logo path
+          <Image
+            source={require("@/assets/images/logo.png")} // Replace with your logo path
             className="w-72 h-72 mb-5" // Tailwind width, height, and margin-bottom
             resizeMode="contain"
           />
