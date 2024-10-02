@@ -8,8 +8,6 @@ import {
   Switch,
   StyleSheet,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-
 import {
   ChevronLeftIcon,
   MapPinIcon,
@@ -21,6 +19,7 @@ import {
   StarIcon,
   AdjustmentsVerticalIcon,
 } from "react-native-heroicons/outline";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface RideRequest {
   id: string;

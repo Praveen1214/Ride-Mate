@@ -3,9 +3,17 @@ import React from "react";
 import { View, Text, Platform } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const TabIcon = ({ name, focused, title }: { name: string; focused: boolean; title: string }) => {
+const TabIcon = ({
+  name,
+  focused,
+  title,
+}: {
+  name: string;
+  focused: boolean;
+  title: string;
+}) => {
   return (
-    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+    <View style={{ alignItems: "center", justifyContent: "center" }}>
       <Icon name={name} size={24} color={focused ? "green" : "gray"} />
     </View>
   );
@@ -21,8 +29,8 @@ const Layout = () => {
         tabBarStyle: {
           backgroundColor: "white",
           overflow: "hidden",
-          height: Platform.OS === 'ios' ? 80 : 60, // Adjust height for Android
-          paddingBottom: Platform.OS === 'ios' ? 20 : 5, // Adjust padding for Android
+          height: Platform.OS === "ios" ? 80 : 60, // Adjust height for Android
+          paddingBottom: Platform.OS === "ios" ? 20 : 5, // Adjust padding for Android
           width: "100%",
           justifyContent: "space-between",
           alignItems: "center",
@@ -59,7 +67,11 @@ const Layout = () => {
           title: "Notification",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="notifications-outline" focused={focused} title="Notification" />
+            <TabIcon
+              name="notifications-outline"
+              focused={focused}
+              title="Notification"
+            />
           ),
         }}
       />

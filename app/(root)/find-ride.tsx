@@ -1,3 +1,6 @@
+import { Ionicons } from "@expo/vector-icons";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import {
   View,
@@ -10,9 +13,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
-import DateTimePicker from "@react-native-community/datetimepicker";
+
 import GoogleTextInput from "@/components/GoogleTextInput"; // Import the custom GoogleTextInput
 import { useLocationStore } from "@/store";
 
@@ -165,15 +166,8 @@ const FindRideScreen = () => {
           )}
 
           {/* Set Location on Map Button */}
-          <TouchableOpacity
-            className="bg-[#E8F5E9] py-4 rounded-lg mt-4 flex-row items-center justify-center"
-          >
-            <Ionicons
-              name="map"
-              size={24}
-              color={baseColor}
-              className="mr-2"
-            />
+          <TouchableOpacity className="bg-[#E8F5E9] py-4 rounded-lg mt-4 flex-row items-center justify-center">
+            <Ionicons name="map" size={24} color={baseColor} className="mr-2" />
             <Text className="text-[#0C6C41] font-bold">
               SET LOCATION ON MAP
             </Text>

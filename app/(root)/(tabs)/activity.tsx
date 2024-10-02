@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
   View,
@@ -7,7 +8,6 @@ import {
   SafeAreaView,
   StatusBar,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 
 type ActivityStatus = "Ongoing" | "Completed" | "Complaint" | "Cancelled";
 
@@ -34,6 +34,7 @@ const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
 
   return (
     <View className="bg-white p-5 mx-4 my-3 rounded-lg shadow-md">
+      <StatusBar barStyle="light-content" backgroundColor="#fffff" />
       <View className="flex-row justify-between mb-3">
         <View>
           <Text className="text-sm font-medium text-gray-800">
@@ -193,8 +194,9 @@ const RideSharingActivity: React.FC = () => {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100">
-      <StatusBar barStyle="dark-content" backgroundColor="#fff" />
+    <SafeAreaView className="flex-1 bg-[#fffff] text-white">
+      <StatusBar barStyle="light-content" backgroundColor="#fffff" text-black />
+
       <View className="bg-white px-5 py-4 flex-row justify-between items-center border-b border-gray-200">
         <Text className="text-2xl font-bold text-[#0C6C41]">
           Your activities

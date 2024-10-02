@@ -1,5 +1,6 @@
 import { View } from "react-native";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+
 import { GoogleInputProps } from "@/types/type";
 
 const googlePlacesApiKey = process.env.EXPO_PUBLIC_PLACES_API_KEY;
@@ -21,7 +22,7 @@ const GoogleTextInput = ({
         styles={{
           container: {
             flex: 1,
-            width: '100%',
+            width: "100%",
           },
           textInputContainer: {
             alignItems: "center",
