@@ -18,6 +18,7 @@ const Map = () => {
     destinationLongitude,
   });
 
+  
   return (
     <MapView
       provider={PROVIDER_DEFAULT}

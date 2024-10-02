@@ -1,12 +1,12 @@
 import { Tabs } from "expo-router";
 import React from "react";
-import { View } from "react-native";
+import { View, Text, Platform } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 
-const TabIcon = ({ name, focused }: { name: string; focused: boolean }) => {
+const TabIcon = ({ name, focused, title }: { name: string; focused: boolean; title: string }) => {
   return (
-    <View>
-      <Icon name={name} size={26} color={focused ? "green" : "gray"} />
+    <View style={{ alignItems: 'center', justifyContent: 'center' }}>
+      <Icon name={name} size={24} color={focused ? "green" : "gray"} />
     </View>
   );
 };
@@ -16,17 +16,20 @@ const Layout = () => {
     <Tabs
       initialRouteName="index"
       screenOptions={{
-        tabBarActiveTintColor: "black",
+        tabBarActiveTintColor: "green",
         tabBarInactiveTintColor: "gray",
         tabBarStyle: {
           backgroundColor: "white",
           overflow: "hidden",
-          marginBottom: 10,
-          height: 80,
+          height: Platform.OS === 'ios' ? 80 : 60, // Adjust height for Android
+          paddingBottom: Platform.OS === 'ios' ? 20 : 5, // Adjust padding for Android
           width: "100%",
           justifyContent: "space-between",
           alignItems: "center",
           position: "absolute",
+        },
+        tabBarItemStyle: {
+          padding: 5,
         },
       }}
     >
@@ -36,7 +39,7 @@ const Layout = () => {
           title: "Home",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="home-outline" focused={focused} />
+            <TabIcon name="home-outline" focused={focused} title="Home" />
           ),
         }}
       />
@@ -46,7 +49,7 @@ const Layout = () => {
           title: "Activity",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="list-outline" focused={focused} />
+            <TabIcon name="list-outline" focused={focused} title="Activity" />
           ),
         }}
       />
@@ -56,7 +59,7 @@ const Layout = () => {
           title: "Notification",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="notifications-outline" focused={focused} />
+            <TabIcon name="notifications-outline" focused={focused} title="Notification" />
           ),
         }}
       />
@@ -66,7 +69,7 @@ const Layout = () => {
           title: "Profile",
           headerShown: false,
           tabBarIcon: ({ focused }) => (
-            <TabIcon name="person-outline" focused={focused} />
+            <TabIcon name="person-outline" focused={focused} title="Profile" />
           ),
         }}
       />
