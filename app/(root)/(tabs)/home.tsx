@@ -66,7 +66,12 @@ const HomeScreen = () => {
     })();
   }, []);
 
-  const handleNavigateToDrop = () => {
+  const handleNavigateToDrop = (location:{
+    latitude: number;
+    longitude: number;
+    address: string;
+  }) => {
+    setDestinationLocation(location);
     if (activeTab === "find") {
       router.push({
         pathname: "/(root)/find-ride",

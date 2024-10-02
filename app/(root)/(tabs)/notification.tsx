@@ -1,11 +1,9 @@
-import { Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-const Notifications = () => {
-  return (
-    <SafeAreaView>
-      <Text>Notifications</Text>
-    </SafeAreaView>
-  );
-};
+import React from 'react'
 
-export default Notifications;
+function notification() {
+  return (
+    <div>notification</div>
+  )
+}
+
+export default notification
