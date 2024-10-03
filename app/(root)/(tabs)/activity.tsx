@@ -7,7 +7,9 @@ import {
   ScrollView,
   SafeAreaView,
   StatusBar,
+  Modal,
 } from "react-native";
+import Giverate from "./Giverate";
 
 type ActivityStatus = "Ongoing" | "Completed" | "Complaint" | "Cancelled";
 
@@ -30,6 +32,7 @@ interface Activity {
 }
 
 const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
+  const [showRating, setShowRating] = useState(false);
   const isOngoing = activity.status === "Ongoing";
 
   return (
@@ -61,8 +64,11 @@ const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
           </Text>
         </View>
 
-        {!isOngoing && (
-          <TouchableOpacity className="bg-[#0C6C41] px-4 py-2 rounded-full">
+        {!isOngoing && !showRating && (
+          <TouchableOpacity
+            className="bg-[#0C6C41] px-4 py-2 rounded-full"
+            onPress={() => setShowRating(true)}
+          >
             <Text className="text-sm font-medium text-white">Rate now</Text>
           </TouchableOpacity>
         )}
@@ -137,6 +143,10 @@ const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
             Contact Driver
           </Text>
         </TouchableOpacity>
+      )}
+
+      {showRating && (
+        <Giverate onClose={() => setShowRating(false)} />
       )}
     </View>
   );
