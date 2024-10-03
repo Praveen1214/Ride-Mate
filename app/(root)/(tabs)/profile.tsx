@@ -1,188 +1,108 @@
-import React, { useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import React from "react";
 import {
-  View,
   Text,
-  Button,
-  Image,
-  StyleSheet,
+  View,
   TouchableOpacity,
+  ScrollView,
+  Platform,
 } from "react-native";
-import * as ImagePicker from "expo-image-picker";
-import axios from "axios";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-const UploadDocumentsScreen = () => {
-  const [profilePhoto, setProfilePhoto] = useState(null);
-  const [nicFront, setNicFront] = useState(null);
-  const [nicRear, setNicRear] = useState(null);
-  const [licenseFront, setLicenseFront] = useState(null);
-  const [licenseRear, setLicenseRear] = useState(null);
+// Simulated user data (to be replaced with MongoDB data in the future)
+const userData = {
+  fullName: "Dileepa Praveen",
+  email: "dileepapraveen32@gmail.com",
+  mobileNumber: "778145785",
+  birthday: "2000-12-14",
+  gender: "Male",
+};
 
-  
+const ProfileItem = ({ icon, label, value }) => (
+  <View className="flex-row items-center py-3 border-b border-gray-200">
+    <Ionicons name={icon} size={20} color="#000" />
+    <View className="flex-1 ml-3">
+      <Text className="text-sm text-black">{label}</Text>
+      <Text className="text-xs text-gray-600">{value}</Text>
+    </View>
+    <Ionicons name="chevron-forward" size={20} color="#ccc" />
+  </View>
+);
 
-  // Function to open image picker
-  const pickImage = async (setImage) => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+const EmergencyContact = ({ icon, label, value }) => (
+  <TouchableOpacity className="bg-white rounded-xl p-4 flex-1 mx-2 shadow-md">
+    <View className="items-center mb-2">
+      <View className="bg-red-100 rounded-full p-3">
+        <Ionicons name={icon} size={24} color="#DC2626" />
+      </View>
+    </View>
+    <Text className="font-bold text-center text-sm mb-1">{label}</Text>
+    <Text className="text-center text-xs text-gray-600">{value}</Text>
+  </TouchableOpacity>
+);
 
-    if (!result.cancelled) {
-      setImage(result.uri);
-    }
-  };
-
-  // Function to upload files
-  const uploadFiles = async () => {
-    const formData = new FormData();
-
-    const appendImage = (uri, name) => {
-      // Determine the file extension and set the MIME type
-      let fileType = uri.split(".").pop();
-      fileType = fileType === "jpg" ? "jpeg" : fileType; // Normalize 'jpg' to 'jpeg'
-
-      formData.append(name, {
-        uri: uri,
-        name: `${name}.${fileType}`,
-        type: `image/${fileType}`, // Dynamically set MIME type
-      });
-    };
-
-    if (profilePhoto) appendImage(profilePhoto, "profilePhoto");
-    if (nicFront) appendImage(nicFront, "nicFront");
-    if (nicRear) appendImage(nicRear, "nicRear");
-    if (licenseFront) appendImage(licenseFront, "licenseFront");
-    if (licenseRear) appendImage(licenseRear, "licenseRear");
-
-    try {
-      const response = await axios.post(
-        "http://192.168.8.174:5000/api/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
-      console.log("Files uploaded successfully", response.data);
-    } catch (error) {
-      console.error("Error uploading files", error);
-    }
-  };
+const Profile = () => {
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-4",
+    android: "mb-2",
+  });
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Personal Document Upload</Text>
+    <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
+      <ScrollView className="bg-white">
+        <View className="bg-[#0C6C41] p-4">
+          <Text className="text-2xl font-bold text-white">Profile</Text>
+        </View>
 
-      {/* Profile Photo Upload */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Profile Photo</Text>
-        <TouchableOpacity
-          style={styles.uploadBox}
-          onPress={() => pickImage(setProfilePhoto)}
-        >
-          <Text style={styles.uploadText}>Profile Photo</Text>
-          {profilePhoto && (
-            <Image source={{ uri: profilePhoto }} style={styles.imagePreview} />
-          )}
+        <View className="p-6">
+          <Text className="text-lg font-bold mb-3">Your Info</Text>
+          <ProfileItem
+            icon="person-outline"
+            label="Full Name"
+            value={userData.fullName}
+          />
+          <ProfileItem
+            icon="mail-outline"
+            label="Email Address"
+            value={userData.email}
+          />
+          <ProfileItem
+            icon="phone-portrait-outline"
+            label="Mobile Number"
+            value={userData.mobileNumber}
+          />
+          <ProfileItem
+            icon="calendar-outline"
+            label="Birthday"
+            value={userData.birthday}
+          />
+          <ProfileItem
+            icon="male-female-outline"
+            label="Gender"
+            value={userData.gender}
+          />
+        </View>
+
+        <View className="p-6 ">
+          <Text className="text-lg font-bold mb-4">Emergency Contacts</Text>
+          <View className={`flex-row ${platformSpecificStyle}`}>
+            <EmergencyContact
+              icon="shield-checkmark"
+              label="Police"
+              value="119"
+            />
+            <EmergencyContact icon="medical" label="Ambulance" value="1990" />
+          </View>
+        </View>
+
+        <TouchableOpacity className="bg-white border border-[#0C6C41] mx-6 my-1  p-3 rounded-lg">
+          <Text className="text-[#0C6C41] font-bold text-center text-base">
+            Log Out
+          </Text>
         </TouchableOpacity>
-      </View>
-      <Button title="Upload Documents" onPress={uploadFiles} />
-
-      {/* NIC Upload */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>National Identity Card</Text>
-        <TouchableOpacity
-          style={styles.uploadBox}
-          onPress={() => pickImage(setNicFront)}
-        >
-          <Text style={styles.uploadText}>NIC - Front</Text>
-          {nicFront && (
-            <Image source={{ uri: nicFront }} style={styles.imagePreview} />
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.uploadBox}
-          onPress={() => pickImage(setNicRear)}
-        >
-          <Text style={styles.uploadText}>NIC - Rear</Text>
-          {nicRear && (
-            <Image source={{ uri: nicRear }} style={styles.imagePreview} />
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {/* Driving License Upload */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Driving License</Text>
-        <TouchableOpacity
-          style={styles.uploadBox}
-          onPress={() => pickImage(setLicenseFront)}
-        >
-          <Text style={styles.uploadText}>Driving License - Front</Text>
-          {licenseFront && (
-            <Image source={{ uri: licenseFront }} style={styles.imagePreview} />
-          )}
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.uploadBox}
-          onPress={() => pickImage(setLicenseRear)}
-        >
-          <Text style={styles.uploadText}>Driving License - Rear</Text>
-          {licenseRear && (
-            <Image source={{ uri: licenseRear }} style={styles.imagePreview} />
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {/* Upload Button */}
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: "#f9f9f9",
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  section: {
-    marginBottom: 30,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  uploadBox: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    height: 100,
-    backgroundColor: "#fff",
-    marginBottom: 10,
-  },
-  uploadText: {
-    fontSize: 16,
-    color: "#888",
-  },
-  imagePreview: {
-    marginTop: 10,
-    width: 80,
-    height: 80,
-    borderRadius: 8,
-  },
-});
-
-export default UploadDocumentsScreen;
+export default Profile;
