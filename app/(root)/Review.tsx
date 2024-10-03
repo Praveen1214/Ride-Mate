@@ -62,8 +62,8 @@ const ReviewCard = ({ name, rating, daysAgo, reviewText, profileImage }) => {
 const Review = () => {
   return (
     <View className="flex-1 bg-white">
-      <View className="bg-green-500 h-16 justify-center px-4">
-        <Text className="text-white text-xl font-semibold">Reviews</Text>
+      <View className="bg-gray-300 h-12 justify-center px-4">
+        <Text className="text-black text-xl font-semibold">Reviews</Text>
       </View>
       <ScrollView>
         {reviews.map((review) => (
