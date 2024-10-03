@@ -10,7 +10,7 @@ import {
   Platform,
   Modal,
 } from "react-native";
-import Giverate from "./Giverate";
+import Giverate from "../Giverate";
 
 type ActivityStatus = "Ongoing" | "Completed" | "Complaint" | "Cancelled";
 
