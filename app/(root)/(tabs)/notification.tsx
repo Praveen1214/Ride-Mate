@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Platform,
 } from "react-native";
 
 interface Notification {
@@ -114,13 +115,19 @@ const NotificationScreen: React.FC = () => {
     },
   ];
 
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-4",
+    android: "mb-5 mt-8",
+  });
+
   return (
-    <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
-      <StatusBar barStyle="light-content" backgroundColor="#0C6C41" />
+    <SafeAreaView
+      className={`flex-1 bg-[#0C6C41] ${platformSpecificStyle} text-white `}
+    >
       <View className="bg-[#0C6C41] p-4">
         <Text className="text-2xl font-bold text-white">Notifications</Text>
       </View>
-      <ScrollView className="h-full bg-white">
+      <ScrollView className="bg-white">
         {notifications.map((notification) => (
           <NotificationItem key={notification.id} notification={notification} />
         ))}
