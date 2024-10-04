@@ -15,13 +15,13 @@ const SplashScreen: React.FC = () => {
   }, []);
 
   return (
-    <View className="flex-1 bg-green-700 justify-center items-center">
+    <View className="items-center justify-center flex-1 bg-green-700">
       {loading ? (
         <>
           {/* Logo Image */}
           <Image
-            source={require("@/assets/images/logo.png")} // Replace with your logo path
-            className="w-72 h-72 mb-5" // Tailwind width, height, and margin-bottom
+            source={require("@/assets/images/logo-original.png")} // Replace with your logo path
+            className="mb-5 w-80 h-80" // Tailwind width, height, and margin-bottom
             resizeMode="contain"
           />
           {/* Loading Indicator */}
