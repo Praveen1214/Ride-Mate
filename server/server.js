@@ -8,9 +8,12 @@ const app = express();
 
 // MongoDB connection
 const mongoURL =
-  process.env.MONGODB_URI || "your-mongodb-connection-string-here";
+  process.env.MONGODB_URI;
 
-mongoose.connect(mongoURL, {});
+mongoose.connect(mongoURL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 const connection = mongoose.connection;
 
