@@ -7,9 +7,10 @@ import {
   ScrollView,
   SafeAreaView,
   StatusBar,
+  Platform,
   Modal,
 } from "react-native";
-import Giverate from "./Giverate";
+import Giverate from "../Giverate";
 
 type ActivityStatus = "Ongoing" | "Completed" | "Complaint" | "Cancelled";
 
@@ -203,10 +204,20 @@ const RideSharingActivity: React.FC = () => {
     },
   ];
 
-  return (
-    <SafeAreaView className="flex-1 bg-[#fffff] text-white">
-      <StatusBar barStyle="light-content" backgroundColor="#fffff" text-black />
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-4",
+    android: "mb-5 mt-8",
+  });
 
+  return (
+    <SafeAreaView
+      className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}
+    >
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="#000000"
+        text-black
+      />
       <View className="bg-white px-5 py-4 flex-row justify-between items-center border-b border-gray-200">
         <Text className="text-2xl font-bold text-[#0C6C41]">
           Your activities
@@ -215,7 +226,6 @@ const RideSharingActivity: React.FC = () => {
           <Ionicons name="menu" size={28} color="#0C6C41" />
         </TouchableOpacity>
       </View>
-
       <View className="flex-row justify-around bg-white py-2 border-b border-gray-200">
         {["Ongoing", "Completed", "Complaint", "Cancelled"].map((tab) => (
           <TouchableOpacity
@@ -237,7 +247,6 @@ const RideSharingActivity: React.FC = () => {
           </TouchableOpacity>
         ))}
       </View>
-
       <ScrollView className="flex-1">
         {activities
           .filter((activity) => activity.status === activeTab)
