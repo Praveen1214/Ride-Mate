@@ -16,6 +16,7 @@ import {
 
 import GoogleTextInput from "@/components/GoogleTextInput"; // Import the custom GoogleTextInput
 import { useLocationStore } from "@/store";
+import { router } from "expo-router";
 
 const FindRideScreen = () => {
   const [pickup, setPickup] = useState(null);
@@ -56,8 +57,15 @@ const FindRideScreen = () => {
 
   const baseColor = "#0C6C41";
 
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-4",
+    android: "mt-2 mb-2",
+  });
+
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView
+      className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}
+    >
       <StatusBar barStyle="dark-content" backgroundColor="white" />
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -176,7 +184,10 @@ const FindRideScreen = () => {
           {/* Find Ride Button */}
           <TouchableOpacity
             className="bg-[#0C6C41] py-4 rounded-lg mt-6 flex-row items-center justify-center"
-            onPress={() => setIsButtonPressed(true)}
+            onPress={() => {
+              setIsButtonPressed(true);
+              router.push("/search_ride");
+            }}
           >
             <Text className="text-white font-bold">FIND RIDE</Text>
           </TouchableOpacity>

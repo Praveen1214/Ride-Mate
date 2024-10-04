@@ -27,7 +27,7 @@ const HomeScreen = () => {
 
   const platformSpecificStyle = Platform.select({
     ios: "mb-4",
-    android: "mb-2",
+    android: "mt-2 mb-2",
   });
 
   const dividerStyle = Platform.select({
@@ -83,7 +83,9 @@ const HomeScreen = () => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
+    <SafeAreaView
+      className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}
+    >
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
 
@@ -148,7 +150,7 @@ const HomeScreen = () => {
 
       >
         <View className={`flex-row ${platformSpecificStyle}`}>
-          <TouchableOpacity 
+          <TouchableOpacity
             className={`flex-1 py-3 flex-row justify-center items-center ${
               activeTab === "find" ? "bg-[#0C6C41]" : "bg-gray-200"
             } rounded-l-md`}
