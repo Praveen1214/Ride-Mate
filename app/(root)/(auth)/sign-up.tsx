@@ -17,8 +17,10 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
 import { icons, images } from "@/constants";
+import { useRouter } from "expo-router";
 
 const SignUp = () => {
+  const router = useRouter();
   const [form, setForm] = useState({
     firstname: "",
     lastname: "",
@@ -30,11 +32,13 @@ const SignUp = () => {
 
   const handleSubmit = () => {
     if (!form.firstname || !form.lastname || !form.email || !form.gender) {
-      Alert.alert("Error", "Please fill in all fields");
+      Alert.alert("Warning", "Please fill in all fields");
       return;
     }
     console.log("Form submitted:", form);
-    Alert.alert("Success", "Account created successfully!");
+    router.push({
+      pathname: "/(auth)/sign-in",
+    });
   };
 
   const GenderOption = ({ value, icon }) => (
