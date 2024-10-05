@@ -49,7 +49,8 @@ router.route('/login').post(async (req, res) => {
                 lastname: passenger.lastname,
                 email: passenger.email,
                 gender: passenger.gender,
-                contact: passenger.contact
+                contact: passenger.contact,
+                role: passenger.role
 
             }
 

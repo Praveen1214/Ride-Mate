@@ -1,7 +1,8 @@
-import { Redirect } from "expo-router";
+import SplashScreen from "./(root)/(auth)/SplashScreen";
+
 
 const Home = () => {
-  return <Redirect href="/(auth)/welcome" />;
+  return <SplashScreen />;
 };
 
 export default Home;
