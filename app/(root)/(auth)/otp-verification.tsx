@@ -61,7 +61,12 @@ const OTPVerificationScreen = () => {
         }
         
       } catch (error) {
-        console.error("OTP verification failed:", error);
+        router.push({
+          pathname: "/(auth)/sign-up",
+          params: {
+            contact
+          }
+        });
         shakeInputs();
       } finally {
         setIsLoading(false);

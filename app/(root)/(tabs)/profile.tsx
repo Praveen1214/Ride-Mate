@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from 'expo-router';
 
 
 const ProfileItem = ({ icon, label, value }) => (
@@ -40,6 +41,8 @@ const Profile = () => {
   const [email, setEmail] = useState("");
   const [contact, setContact] = useState("");
   const [gender, setGender] = useState("");
+
+  const router = useRouter();
 
   useEffect(() => {
     const getPassengerDetails = async () => {
@@ -77,6 +80,16 @@ const Profile = () => {
     android: "mb-2",
   });
 
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('passengerDetails');
+      router.replace("/(auth)/sign-in");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
+  
   return (
     <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
       <ScrollView className="bg-white">
@@ -125,7 +138,7 @@ const Profile = () => {
           </View>
         </View>
 
-        <TouchableOpacity className="bg-white border border-[#0C6C41] mx-6 my-1  p-3 rounded-lg">
+        <TouchableOpacity className="bg-white border border-[#0C6C41] mx-6 my-2 p-3 rounded-lg" onPress={handleLogout}>
           <Text className="text-[#0C6C41] font-bold text-center text-base">
             Log Out
           </Text>
