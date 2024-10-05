@@ -9,14 +9,14 @@ import {
   TextInput,
   SafeAreaView,
   StatusBar,
-
   TouchableOpacity,
   ScrollView,
   Keyboard,
-  Platform,
+  Platform
 } from "react-native";
 import Map from "@/components/Map";
 import { useLocationStore } from "@/store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const PRIMARY_COLOR = "#0C6C41";
 
@@ -25,21 +25,42 @@ const HomeScreen = () => {
   const [activeTab, setActiveTab] = useState("find");
   const [hasPermission, setHasPermission] = useState(false);
 
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const getPassengerDetails = async () => {
+      try {
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+          setUserName(
+            passengerDetails.firstname + " " + passengerDetails.lastname
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    getPassengerDetails();
+  }, []);
+
   const platformSpecificStyle = Platform.select({
     ios: "mb-4",
-    android: "mt-2 mb-2",
+    android: "mt-2 mb-2"
   });
 
   const dividerStyle = Platform.select({
     ios: "absolute h-[1px] bg-gray-300 top-[40px] left-16 right-12",
-    android: "absolute h-[1px] bg-gray-300 top-[43px] left-16 right-12",
+    android: "absolute h-[1px] bg-gray-300 top-[43px] left-16 right-12"
   });
 
   const {
     userAddress,
     destinationAddress,
     setDestinationLocation,
-    setUserLocation,
+    setUserLocation
   } = useLocationStore();
 
   useEffect(() => {
@@ -54,13 +75,13 @@ const HomeScreen = () => {
       let location = await Location.getCurrentPositionAsync({});
       const address = await Location.reverseGeocodeAsync({
         latitude: location.coords?.latitude,
-        longitude: location.coords?.longitude,
+        longitude: location.coords?.longitude
       });
 
       setUserLocation({
         latitude: location.coords?.latitude,
         longitude: location.coords?.longitude,
-        address: `${address[0].name}, ${address[0].region}`,
+        address: `${address[0].name}, ${address[0].region}`
       });
     })();
   }, []);
@@ -73,11 +94,11 @@ const HomeScreen = () => {
     setDestinationLocation(location);
     if (activeTab === "find") {
       router.push({
-        pathname: "/(root)/find-ride",
+        pathname: "/(root)/find-ride"
       });
     } else {
       router.push({
-        pathname: "/(root)/offer-ride",
+        pathname: "/(root)/offer-ride"
       });
     }
   };
@@ -87,7 +108,6 @@ const HomeScreen = () => {
       className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}
     >
       <StatusBar barStyle="dark-content" backgroundColor="white" />
-
 
       {/* Map View */}
       <View className="flex flex-row items-center h-full bg-transparent">
@@ -106,7 +126,7 @@ const HomeScreen = () => {
           paddingVertical: 12,
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: "center",
+          alignItems: "center"
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -118,7 +138,7 @@ const HomeScreen = () => {
               shadowColor: "#000",
               borderRadius: 18,
               alignItems: "center",
-              justifyContent: "center",
+              justifyContent: "center"
             }}
           >
             <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
@@ -127,27 +147,24 @@ const HomeScreen = () => {
           </View>
           <View style={{ marginLeft: 12 }}>
             <Text style={{ fontSize: 16, fontWeight: "600" }}>
-              Welcome! Praveen
+              Welcome! {userName}
             </Text>
-            <Text style={{ fontSize: 14, color: "gray" }}>Malabe</Text>
+            <Text style={{ fontSize: 14, color: "gray" }}> {userAddress} </Text>
           </View>
         </View>
         <Ionicons name="notifications-outline" size={20} color="#000" />
-
       </View>
 
       {/* Ride Form */}
       <View
-
-        className="absolute bottom-16 left-4 right-4 bg-white rounded-xl mb-8 shadow-md"
+        className="absolute mb-8 bg-white shadow-md bottom-16 left-4 right-4 rounded-xl"
         style={{
           elevation: 5,
           bottom: Platform.OS === "ios" ? 60 : 40,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.25,
-          shadowRadius: 3.84,
+          shadowRadius: 3.84
         }}
-
       >
         <View className={`flex-row ${platformSpecificStyle}`}>
           <TouchableOpacity
@@ -196,35 +213,32 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
-
         <ScrollView className="px-2">
           <View className="flex-row items-center justify-start">
-            <Text className="text-sm text-blue-500 w-20 font-bold ml-3">
+            <Text className="w-20 ml-3 text-sm font-bold text-blue-500">
               PICKUP
             </Text>
             <TouchableOpacity onPress={handleNavigateToDrop} className="flex-1">
               <TextInput
                 placeholder={userAddress}
                 placeholderTextColor="gray"
-                className="text-sm font-bold text-gray-700 flex-1 px-3 rounded ml-0"
+                className="flex-1 px-3 ml-0 text-sm font-bold text-gray-700 rounded"
               />
             </TouchableOpacity>
           </View>
 
           <View className={dividerStyle} />
-          <View className="mr-4 items-left ml-7 h-10">
-
+          <View className="h-10 mr-4 items-left ml-7">
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
             <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
           </View>
 
-          <View className="flex-row mb-3 items-center pl-5">
-            <Text className="text-sm text-orange-500 w-20 font-bold">DROP</Text>
+          <View className="flex-row items-center pl-5 mb-3">
+            <Text className="w-20 text-sm font-bold text-orange-500">DROP</Text>
 
             <TouchableOpacity onPress={handleNavigateToDrop} className="flex-1">
-              <Text className="text-sm text-gray-700 flex-1 px-3 rounded ml-0 mb-0 font-bold">
-
+              <Text className="flex-1 px-3 mb-0 ml-0 text-sm font-bold text-gray-700 rounded">
                 Where are you Drop?
               </Text>
             </TouchableOpacity>
