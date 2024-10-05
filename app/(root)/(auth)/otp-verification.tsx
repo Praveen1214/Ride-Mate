@@ -12,8 +12,12 @@ import {
   StatusBar,
   Animated,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const OTPVerificationScreen = () => {
   const [otp, setOtp] = useState(["", "", "", ""]);
@@ -21,7 +25,7 @@ const OTPVerificationScreen = () => {
   const [countdown, setCountdown] = useState(30);
   const router = useRouter();
   const route = useRoute();
-  const { phoneNumber = "+947XXXXXXXXX" } = route.params || {};
+  const { contact } = route.params || {};
   const inputRefs = useRef([]);
   const shakeAnimation = useRef(new Animated.Value(0)).current;
 
@@ -38,7 +42,24 @@ const OTPVerificationScreen = () => {
       try {
         // Simulating API call
         await new Promise((resolve) => setTimeout(resolve, 2000));
-        router.push("/(tabs)/home");
+        const response = await axios.post(`http://192.168.43.196:5000/api/passenger/login`, {
+          contact
+        });
+
+        if (response.data.status === "Login Success") {
+          const passengerDetails = response.data.loginPassenger;
+
+          // Store user details in AsyncStorage
+          await AsyncStorage.setItem('passengerDetails', JSON.stringify(passengerDetails));
+
+          // Navigate to HomeScreen
+          router.push({
+            pathname: "/(tabs)/home",
+          });
+        } else {
+          Alert.alert("Login Failed", "Contact number is incorrect");
+        }
+        
       } catch (error) {
         console.error("OTP verification failed:", error);
         shakeInputs();
@@ -102,24 +123,24 @@ const OTPVerificationScreen = () => {
 
         <TouchableOpacity
           onPress={() => router.back()}
-          className="absolute top-12 left-2 z-10"
+          className="absolute z-10 top-12 left-2"
         >
           <Ionicons name="chevron-back" size={28} color="#000" />
         </TouchableOpacity>
 
-        <View className="flex-1 justify-center items-center px-6">
-          <Text className="text-xl text-center mb-2 font-semibold">
+        <View className="items-center justify-center flex-1 px-6">
+          <Text className="mb-2 text-xl font-semibold text-center">
             Enter 4-Digit Verification Code
           </Text>
-          <Text className="text-lg text-center mb-6">
-            Sent to {phoneNumber}{" "}
+          <Text className="mb-6 text-lg text-center">
+            Sent to {contact}{" "}
             <TouchableOpacity onPress={() => router.back()}>
-              <Text className="text-green-600 font-semibold">Change</Text>
+              <Text className="font-semibold text-green-600">Change</Text>
             </TouchableOpacity>
           </Text>
 
           <Animated.View
-            className="flex-row justify-center space-x-4 mb-6"
+            className="flex-row justify-center mb-6 space-x-4"
             style={{ transform: [{ translateX: shakeAnimation }] }}
           >
             {otp.map((digit, index) => (
@@ -170,7 +191,7 @@ const OTPVerificationScreen = () => {
             {isLoading ? (
               <ActivityIndicator color="white" />
             ) : (
-              <Text className="text-white text-lg font-bold">Verify</Text>
+              <Text className="text-lg font-bold text-white">Verify</Text>
             )}
           </TouchableOpacity>
         </View>

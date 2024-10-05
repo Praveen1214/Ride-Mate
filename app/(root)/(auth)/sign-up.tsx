@@ -35,9 +35,14 @@ const SignUp = () => {
       Alert.alert("Warning", "Please fill in all fields");
       return;
     }
-    console.log("Form submitted:", form);
     router.push({
       pathname: "/(auth)/sign-in",
+      params: {
+        firstname: form.firstname,
+        lastname: form.lastname,
+        email: form.email,
+        gender: form.gender
+      }
     });
   };
 
