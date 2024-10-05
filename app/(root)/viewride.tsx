@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import axios from "axios";
+import { useFocusEffect, useRouter } from "expo-router";
 import { Avatar } from 'react-native-elements';
 import { FontAwesome } from '@expo/vector-icons';
 import Review from "./Review";
@@ -7,6 +9,8 @@ import { Ionicons } from "@expo/vector-icons";
 
 
 const ViewRide = () => {
+
+ 
   return (
     <ScrollView className="flex-1 bg-gray-100">
       {/* Rider Info Section */}
