@@ -41,7 +41,7 @@ const SignUp = () => {
       return;
     }
     try {
-      const response = await axios.post(`http://192.168.8.155:5000/api/passenger/register`, {
+      const response = await axios.post(`http://192.168.8.174:5000/api/passenger/register`, {
         firstname: form.firstname,
         lastname: form.lastname,
         email: form.email,
