@@ -1,21 +1,13 @@
+import React, { useState, useEffect } from "react";
+import { View, Text, SafeAreaView, StatusBar, TouchableOpacity, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
-import { router } from "expo-router";
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  SafeAreaView,
-  StatusBar,
-  TouchableOpacity,
-  Platform
-} from "react-native";
-import Map from "@/components/Map";
-import { useLocationStore } from "@/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocationStore } from "@/store";
 import FindRideSection from "@/components/FindRideSection";
 import OfferRideSection from "@/components/OfferRideSection";
+import Map from "@/components/Map";
 
 const PRIMARY_COLOR = "#0C6C41";
 
@@ -24,9 +16,11 @@ const HomeScreen = () => {
   const [activeTab, setActiveTab] = useState("find");
   const [hasPermission, setHasPermission] = useState(false);
   const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState(""); // State to store user role
 
   const { userAddress, setUserLocation } = useLocationStore();
 
+  // Fetch passenger details from AsyncStorage
   useEffect(() => {
     const getPassengerDetails = async () => {
       try {
@@ -34,6 +28,7 @@ const HomeScreen = () => {
         if (passengerDetailsString) {
           const passengerDetails = JSON.parse(passengerDetailsString);
           setUserName(`${passengerDetails.firstname} ${passengerDetails.lastname}`);
+          setUserRole(passengerDetails.role); // Set the role to state
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -43,6 +38,7 @@ const HomeScreen = () => {
     getPassengerDetails();
   }, []);
 
+  // Fetch location permission and address
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -67,7 +63,7 @@ const HomeScreen = () => {
   }, []);
 
   const platformSpecificStyle = Platform.select({
-    ios: "mb-4",
+    ios: "mb-1",
     android: "mt-2 mb-2"
   });
 
@@ -176,7 +172,11 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
-        {activeTab === "find" ? <FindRideSection /> : <OfferRideSection />}
+        {activeTab === "find" ? (
+          <FindRideSection />
+        ) : (
+          <OfferRideSection userRole={userRole} /> // Pass the role to OfferRideSection
+        )}
       </View>
     </SafeAreaView>
   );
