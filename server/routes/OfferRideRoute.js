@@ -35,5 +35,14 @@ router.route('/addofferride').post(async (req, res) => {
     }
 });
 
+router.route('/getallofferrides').get(async (req, res) => {
+    try {
+        const allRides = await OfferRide.find();
+        return res.status(200).json(allRides);
+    } catch (error) {
+        return res.status(500).json({ status: "Error fetching rides", message: error.message });
+    }
+});
+
 
 module.exports = router;
