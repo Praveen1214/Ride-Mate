@@ -7,6 +7,7 @@ import { FontAwesome } from '@expo/vector-icons';
 import Review from "./Review";
 import { Ionicons,AntDesign } from "@expo/vector-icons";
 import { router } from 'expo-router';
+import Entypo from '@expo/vector-icons/Entypo';
 
 
 
@@ -39,7 +40,13 @@ const ViewRide = () => {
           </View>
           <Text className="text-sm text-gray-500 mt-1">Joined 2024</Text>
         </View>
+        <View>
         <Text className="text-xl font-bold">LKR 275.56</Text>
+        <View className="ml-9  mt-4">
+        <Entypo name="mail" size={24} color="gray" />
+        </View>
+      
+        </View>
       </View>
 
       {/* Ride Details Section */}
@@ -112,13 +119,11 @@ const ViewRide = () => {
       </View>
 
       {/* Action Buttons */}
-      <View className="flex-row justify-between mt-4 mx-2 mb-4">
-        <TouchableOpacity className="bg-green-500 px-6 py-3 rounded flex-1 mr-2">
-          <Text className="text-white text-center font-bold">Request ride</Text>
+      <View className="flex-row justify-between mt-4 mx-1 ml-2 mr-0 mb-4 ">
+        <TouchableOpacity className="bg-green-700 px-6 py-3 w-full h-14 rounded flex-1 mr-2">
+          <Text className="text-white text-xl text-center font-bold ">Request ride</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="bg-gray-400 px-6 py-3 rounded flex-1 ml-2">
-          <Text className="text-white text-center font-bold">Message</Text>
-        </TouchableOpacity>
+       
       </View>
 
       {/* Reviews */}

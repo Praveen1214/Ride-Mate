@@ -3,49 +3,73 @@ import { View, Text, Image, TextInput, TouchableOpacity, SafeAreaView, FlatList,
 import { router } from 'expo-router';
 import { AntDesign, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 
-
 const RideCard = ({ ride }) => (
   <TouchableOpacity 
     onPress={() => router.navigate('/viewride')} 
-    className="bg-white rounded-xl p-4 mb-4 shadow-md"
+    style={{ backgroundColor: 'white', borderRadius: 12, padding: 16, marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}
   >
-    <View className="flex-row justify-between items-center mb-4">
-      <View className="flex-row items-center">
-        <Image source={{ uri: ride.driverImage }} className="w-12 h-12 rounded-full mr-3" />
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Image source={{ uri: ride.driverImage }} style={{ width: 48, height: 48, borderRadius: 24, marginRight: 12 }} />
         <View>
-          <Text className="text-lg font-semibold text-gray-800">{ride.driverName}</Text>
-          <View className="flex-row items-center">
+          <Text style={{ fontSize: 18, fontWeight: '600', color: '#4A5568' }}>{ride.driverName}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <AntDesign name="star" size={16} color="#FFD700" />
-            <Text className="text-sm text-gray-600 ml-1">{ride.rating}</Text>
+            <Text style={{ fontSize: 14, color: '#718096', marginLeft: 4 }}>{ride.rating}</Text>
           </View>
         </View>
       </View>
-      <View className="items-end">
-        <Text className="text-lg font-bold text-green-600">LKR {ride.price}</Text>
-        <Text className="text-sm text-gray-500">{ride.distance}</Text>
+      <View style={{ alignItems: 'flex-end' }}>
+        <Text style={{ fontSize: 18, fontWeight: '700', color: '#48BB78' }}>LKR {ride.price}</Text>
+        <Text style={{ fontSize: 14, color: '#A0AEC0' }}>{ride.distance}</Text>
       </View>
     </View>
     
-    <View className="flex-row items-center mb-4">
-      <View className="mr-4">
-        <View className="w-3 h-3 rounded-full bg-blue-500 mb-1" />
-        <View className="w-0.5 h-10 bg-gray-300 ml-1.5" />
-        <View className="w-3 h-3 rounded-full bg-green-500 mt-1" />
-      </View>
-      <View className="flex-1">
-        <Text className="text-base text-gray-800 mb-2">{ride.pickup}</Text>
-        <Text className="text-base text-gray-800">{ride.dropoff}</Text>
-      </View>
+    {/* Pickup and Dropoff Section */}
+   <View className="mb-4">
+  <View className="flex-row items-center mb-">
+    <View className=" rounded-full  mr-3">
+    <Ionicons name="location-sharp" size={25} color="#FFA500" />
     </View>
-    
-    <View className="flex-row justify-between items-center">
-      <View className="flex-row items-center">
-        <MaterialCommunityIcons name="car-hatchback" size={24} color="#4A5568" />
-        <Text className="text-sm text-gray-600 ml-2">{ride.carType}</Text>
+    <View>
+      <Text className="text-sm font-medium text-gray-800">
+        Anuradhapura
+      </Text>
+      <Text className="text-xs text-gray-600">Description</Text>
+    </View>
+    {/* Clock Icon and Arrival Text on the Same Line */}
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 'auto' }}> 
+      <Ionicons name="time-outline" size={20} color="#4A5568" />
+      <Text style={{ fontSize: 14, color: '#718096', marginLeft: 4 }}>Arrives in {ride.eta} mins</Text>
+    </View>
+  </View>
+
+  <View className="w-0.5 h-4 bg-[#0C6C41] ml-3" />
+
+  <View className="flex-row items-center">
+    <View className=" rounded-full  mr-3">
+    <Ionicons name="location-sharp" size={25} color="#08019C" />
+    </View>
+    <View>
+      <Text className="text-sm font-medium text-gray-800">
+        Colombo
+      </Text>
+      <Text className="text-xs text-gray-600">Description</Text>
+    </View>
+    {/* Car Icon and Car Type Text on the Same Line */}
+    <View style={{ flexDirection: 'row', alignItems: 'center', marginLeft: 'auto' }}>
+      <MaterialCommunityIcons name="car-hatchback" size={24} color="#4A5568" />
+      <Text style={{ fontSize: 14, color: '#718096', marginLeft: 8 }}>{ride.carType}</Text>
+    </View>
+  </View>
+</View>
+
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+       
       </View>
-      <View className="flex-row items-center">
-        <Ionicons name="time-outline" size={20} color="#4A5568" />
-        <Text className="text-sm text-gray-600 ml-1">Arrives in {ride.eta} mins</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        
       </View>
     </View>
   </TouchableOpacity>
@@ -82,29 +106,29 @@ const SearchRide = () => {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-gray-100 mt-6">
-    <StatusBar barStyle="dark-content" />
-    <View className="bg-[#0C6C41] p-4">
-      <View className="flex-row items-center">
-        <TouchableOpacity onPress={() => router.back()}>
-          <AntDesign name="arrowleft" size={24} color="white" />
-        </TouchableOpacity>
-        <Text className="text-2xl font-bold text-white ml-4">SearchRide</Text>
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#F7FAFC', marginTop: 24 }}>
+      <StatusBar barStyle="dark-content" />
+      <View style={{ backgroundColor: '#0C6C41', padding: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <AntDesign name="arrowleft" size={24} color="white" />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 24, fontWeight: '700', color: 'white', marginLeft: 16 }}>SearchRide</Text>
+        </View>
       </View>
-    </View>
-      <View className="px-4 py-2 mt-2">
-        <View className="flex-row items-center bg-white rounded-full px-4 py-2 mb-4 shadow-sm">
+      <View style={{ paddingHorizontal: 16, paddingVertical: 8, marginTop: 8 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: 'white', borderRadius: 50, paddingHorizontal: 16, paddingVertical: 8, marginBottom: 16, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 10 }}>
           <AntDesign name="search1" size={20} color="#4A5568" />
           <TextInput
             placeholder="Where to?"
             placeholderTextColor="#A0AEC0"
             value={searchQuery}
             onChangeText={setSearchQuery}
-            className="flex-1 ml-2 text-base text-gray-800 "
+            style={{ flex: 1, marginLeft: 8, fontSize: 16, color: '#2D3748' }}
           />
         </View>
         
-        <Text className="text-xl font-bold text-gray-800 mb-4">Available Rides</Text>
+        <Text style={{ fontSize: 20, fontWeight: '700', color: '#2D3748', marginBottom: 16 }}>Available Rides</Text>
         
         <FlatList
           data={rideData}
