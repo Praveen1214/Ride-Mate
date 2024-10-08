@@ -1,22 +1,13 @@
+import React, { useState, useEffect } from "react";
+import { View, Text, SafeAreaView, StatusBar, TouchableOpacity, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import * as Location from "expo-location";
-import { router } from "expo-router";
-import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  SafeAreaView,
-  StatusBar,
-  TouchableOpacity,
-  ScrollView,
-  Keyboard,
-  Platform
-} from "react-native";
-import Map from "@/components/Map";
-import { useLocationStore } from "@/store";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLocationStore } from "@/store";
+import FindRideSection from "@/components/FindRideSection";
+import OfferRideSection from "@/components/OfferRideSection";
+import Map from "@/components/Map";
 
 const PRIMARY_COLOR = "#0C6C41";
 
@@ -24,19 +15,20 @@ const HomeScreen = () => {
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("find");
   const [hasPermission, setHasPermission] = useState(false);
-
   const [userName, setUserName] = useState("");
+  const [userRole, setUserRole] = useState(""); // State to store user role
 
+  const { userAddress, setUserLocation } = useLocationStore();
+
+  // Fetch passenger details from AsyncStorage
   useEffect(() => {
     const getPassengerDetails = async () => {
       try {
-        const passengerDetailsString =
-          await AsyncStorage.getItem("passengerDetails");
+        const passengerDetailsString = await AsyncStorage.getItem("passengerDetails");
         if (passengerDetailsString) {
           const passengerDetails = JSON.parse(passengerDetailsString);
-          setUserName(
-            passengerDetails.firstname + " " + passengerDetails.lastname
-          );
+          setUserName(`${passengerDetails.firstname} ${passengerDetails.lastname}`);
+          setUserRole(passengerDetails.role); // Set the role to state
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -46,23 +38,7 @@ const HomeScreen = () => {
     getPassengerDetails();
   }, []);
 
-  const platformSpecificStyle = Platform.select({
-    ios: "mb-4",
-    android: "mt-2 mb-2"
-  });
-
-  const dividerStyle = Platform.select({
-    ios: "absolute h-[1px] bg-gray-300 top-[40px] left-16 right-12",
-    android: "absolute h-[1px] bg-gray-300 top-[43px] left-16 right-12"
-  });
-
-  const {
-    userAddress,
-    destinationAddress,
-    setDestinationLocation,
-    setUserLocation
-  } = useLocationStore();
-
+  // Fetch location permission and address
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -86,27 +62,13 @@ const HomeScreen = () => {
     })();
   }, []);
 
-  const handleNavigateToDrop = (location: {
-    latitude: number;
-    longitude: number;
-    address: string;
-  }) => {
-    setDestinationLocation(location);
-    if (activeTab === "find") {
-      router.push({
-        pathname: "/(root)/find-ride"
-      });
-    } else {
-      router.push({
-        pathname: "/(root)/offer-ride"
-      });
-    }
-  };
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-1",
+    android: "mt-2 mb-2"
+  });
 
   return (
-    <SafeAreaView
-      className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}
-    >
+    <SafeAreaView className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}>
       <StatusBar barStyle="dark-content" backgroundColor="white" />
 
       {/* Map View */}
@@ -171,10 +133,7 @@ const HomeScreen = () => {
             className={`flex-1 py-3 flex-row justify-center items-center ${
               activeTab === "find" ? "bg-[#0C6C41]" : "bg-gray-200"
             } rounded-l-md`}
-            onPress={() => {
-              setActiveTab("find");
-              router.push("/search_ride");
-            }}
+            onPress={() => setActiveTab("find")}
           >
             <Ionicons
               name="location-outline"
@@ -213,37 +172,11 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
 
-        <ScrollView className="px-2">
-          <View className="flex-row items-center justify-start">
-            <Text className="w-20 ml-3 text-sm font-bold text-blue-500">
-              PICKUP
-            </Text>
-            <TouchableOpacity onPress={handleNavigateToDrop} className="flex-1">
-              <TextInput
-                placeholder={userAddress}
-                placeholderTextColor="gray"
-                className="flex-1 px-3 ml-0 text-sm font-bold text-gray-700 rounded"
-              />
-            </TouchableOpacity>
-          </View>
-
-          <View className={dividerStyle} />
-          <View className="h-10 mr-4 items-left ml-7">
-            <View className="w-2 h-2 bg-gray-400 rounded-full" />
-            <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
-            <View className="w-2 h-2 bg-gray-400 rounded-full" />
-          </View>
-
-          <View className="flex-row items-center pl-5 mb-3">
-            <Text className="w-20 text-sm font-bold text-orange-500">DROP</Text>
-
-            <TouchableOpacity onPress={handleNavigateToDrop} className="flex-1">
-              <Text className="flex-1 px-3 mb-0 ml-0 text-sm font-bold text-gray-700 rounded">
-                Where are you Drop?
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+        {activeTab === "find" ? (
+          <FindRideSection />
+        ) : (
+          <OfferRideSection userRole={userRole} /> // Pass the role to OfferRideSection
+        )}
       </View>
     </SafeAreaView>
   );
