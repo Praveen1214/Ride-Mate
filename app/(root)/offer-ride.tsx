@@ -14,13 +14,21 @@ import {
   Platform,
   Modal,
   KeyboardAvoidingView,
+  Alert,
+  ActivityIndicator
 } from "react-native";
+import axios from 'axios';
 
 import GoogleTextInput from "@/components/GoogleTextInput";
+import { useRoute } from "@react-navigation/native";
+import { router } from "expo-router";
 
 const OfferRideScreen = () => {
-  const [pickup, setPickup] = useState("Location fetched");
-  const [drop, setDrop] = useState("");
+  const route = useRoute();
+  const { userAddress } = route.params || {};
+
+  const [pickup, setPickup] = useState(userAddress || {});
+  const [drop, setDrop] = useState({});
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showVehiclePicker, setShowVehiclePicker] = useState(false);
@@ -30,6 +38,8 @@ const OfferRideScreen = () => {
   const [availableSeats, setAvailableSeats] = useState("");
   const [luggageCapacity, setLuggageCapacity] = useState("");
   const [facilities, setFacilities] = useState("");
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigation = useNavigation();
 
@@ -49,9 +59,48 @@ const OfferRideScreen = () => {
     setDrop(location);
   };
 
-  const handleConfirmDate = () => {
-    setShowDatePicker(false);
+  const validateInputs = () => {
+    if (!pickup.address || !drop.address || !date || !price || !vehicleType || !availableSeats || !luggageCapacity || !facilities) {
+      Alert.alert("Incomplete Information", "Please fill in all the details before scheduling the ride.");
+      return false;
+    }
+    return true;
   };
+
+  const handleScheduleRide = async () => {
+    if (!validateInputs()) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://192.168.43.196:5000/api/offerride/addofferride', {
+        start: pickup,
+        end: drop,
+        datetime: date.toISOString(),
+        price: parseFloat(price),
+        vehicletype: vehicleType,
+        availableSeats: parseInt(availableSeats),
+        luggagecapacity: luggageCapacity,
+        facilities: facilities
+      });
+
+      if (response.status === 200) {
+        Alert.alert("Success", "Ride scheduled successfully!", [
+          { text: "OK", onPress: () => router.push({ pathname: "/(root)/ride_requests" }) }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error details:', error.response?.data);
+      Alert.alert(
+        "Error",
+        "Failed to schedule ride. Please try again later.",
+        [{ text: "OK" }]
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  
 
   const baseColor = "#0C6C41";
   const lightColor = "#E8F5E9";
@@ -62,11 +111,11 @@ const OfferRideScreen = () => {
     setValue,
     placeholder,
     keyboardType = "default",
-    icon,
+    icon
   ) => (
     <View className="mb-6">
       <Text className="text-sm font-bold mb-2 text-[#0C6C41]">{label}</Text>
-      <View className="flex-row items-center bg-white rounded-lg border border-gray-300 px-3 py-2 ">
+      <View className="flex-row items-center px-3 py-2 bg-white border border-gray-300 rounded-lg ">
         {icon && (
           <Ionicons name={icon} size={24} color={baseColor} className="mr-5 " />
         )}
@@ -89,12 +138,12 @@ const OfferRideScreen = () => {
     items,
     showPicker,
     setShowPicker,
-    icon,
+    icon
   ) => (
     <View className="mb-6">
       <Text className="text-sm font-bold mb-2 text-[#0C6C41] ">{label}</Text>
       <TouchableOpacity
-        className="flex-row items-center bg-white rounded-lg border border-gray-300 px-3 py-2 "
+        className="flex-row items-center px-3 py-2 bg-white border border-gray-300 rounded-lg "
         onPress={() => setShowPicker(true)}
       >
         {icon && (
@@ -106,15 +155,15 @@ const OfferRideScreen = () => {
         <Ionicons name="chevron-down" size={24} color={baseColor} />
       </TouchableOpacity>
       <Modal transparent={true} animationType="slide" visible={showPicker}>
-        <View className="flex-1 justify-end  bg-opacity-50">
+        <View className="justify-end flex-1 bg-opacity-50">
           <View className="bg-white rounded-t-xl">
             <View className="flex-row justify-between items-center px-4 py-3 rounded-t-xl bg-[#0C6C41]">
               <TouchableOpacity onPress={() => setShowPicker(false)}>
-                <Text className="text-white font-semibold">Cancel</Text>
+                <Text className="font-semibold text-white">Cancel</Text>
               </TouchableOpacity>
-              <Text className="text-white font-bold text-lg">{`Select ${label}`}</Text>
+              <Text className="text-lg font-bold text-white">{`Select ${label}`}</Text>
               <TouchableOpacity onPress={() => setShowPicker(false)}>
-                <Text className="text-white font-semibold">Done</Text>
+                <Text className="font-semibold text-white">Done</Text>
               </TouchableOpacity>
             </View>
             <Picker
@@ -152,19 +201,19 @@ const OfferRideScreen = () => {
           >
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
-          <Text className="text-white text-xl font-bold">Offer Ride</Text>
+          <Text className="text-xl font-bold text-white">Offer Ride</Text>
         </View>
 
-        <View className="bg-white rounded-lg shadow-md p-4 mt-4 m-4">
+        <View className="p-4 m-4 mt-4 bg-white rounded-lg shadow-md">
           {/* Pickup Section */}
           <View className="mb-2">
             <View className="flex-row items-center">
-              <Text className="text-sm text-blue-500 w-20 font-bold">
-                PICKUP
+              <Text className="w-20 text-sm font-bold text-blue-500">
+                START
               </Text>
               <GoogleTextInput
                 icon={null}
-                initialLocation={pickup ? pickup.address : null}
+                initialLocation={userAddress}
                 handlePress={handlePickupLocation}
                 textInputBackgroundColor="white"
                 containerStyle="flex-1"
@@ -174,7 +223,7 @@ const OfferRideScreen = () => {
 
           {/* Vertical Line between Pickup and Drop */}
           {/* Vertical Line between Pickup and Drop */}
-          <View className="mr-4 items-left ml-5 h-10 p-0">
+          <View className="h-10 p-0 ml-5 mr-4 items-left">
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
             <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
@@ -183,8 +232,8 @@ const OfferRideScreen = () => {
           {/* Drop Section */}
           <View>
             <View className="flex-row items-center">
-              <Text className="text-sm text-orange-500 w-20 font-bold">
-                DROP
+              <Text className="w-20 text-sm font-bold text-orange-500">
+                END
               </Text>
               <GoogleTextInput
                 icon={null}
@@ -197,7 +246,7 @@ const OfferRideScreen = () => {
           </View>
         </View>
         <ScrollView className="flex-1 px-4">
-          <View className="bg-white rounded-lg shadow-md p-4 mb-6 ">
+          <View className="p-4 mb-6 bg-white rounded-lg shadow-md ">
             <Text className="text-sm font-bold mb-2 text-[#0C6C41]">
               DATE AND TIME
             </Text>
@@ -211,7 +260,7 @@ const OfferRideScreen = () => {
                 color={baseColor}
                 className="mr-2"
               />
-              <Text className="text-gray-700 ml-4">
+              <Text className="ml-4 text-gray-700">
                 {date.toLocaleString()}
               </Text>
             </TouchableOpacity>
@@ -223,17 +272,17 @@ const OfferRideScreen = () => {
               animationType="slide"
               visible={showDatePicker}
             >
-              <View className="flex-1 justify-end  bg-opacity-50">
+              <View className="justify-end flex-1 bg-opacity-50">
                 <View className="bg-white rounded-t-xl">
                   <View className="flex-row justify-between items-center px-4 py-3 rounded-t-xl bg-[#0C6C41]">
                     <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                      <Text className="text-white font-semibold">Cancel</Text>
+                      <Text className="font-semibold text-white">Cancel</Text>
                     </TouchableOpacity>
-                    <Text className="text-white font-bold text-lg">
+                    <Text className="text-lg font-bold text-white">
                       Select Date & Time
                     </Text>
                     <TouchableOpacity onPress={handleConfirmDate}>
-                      <Text className="text-white font-semibold">Done</Text>
+                      <Text className="font-semibold text-white">Done</Text>
                     </TouchableOpacity>
                   </View>
                   <DateTimePicker
@@ -261,7 +310,7 @@ const OfferRideScreen = () => {
             setPrice,
             "Enter price",
             "numeric",
-            "cash",
+            "cash"
           )}
 
           {renderPicker(
@@ -273,11 +322,11 @@ const OfferRideScreen = () => {
               { label: "Sedan", value: "Sedan" },
               { label: "SUV", value: "SUV" },
               { label: "Hatchback", value: "Hatchback" },
-              { label: "Van", value: "Van" },
+              { label: "Van", value: "Van" }
             ],
             showVehiclePicker,
             setShowVehiclePicker,
-            "car",
+            "car"
           )}
 
           {renderInputField(
@@ -286,7 +335,7 @@ const OfferRideScreen = () => {
             setAvailableSeats,
             "Enter available seats",
             "numeric",
-            "people",
+            "people"
           )}
 
           {renderPicker(
@@ -297,11 +346,11 @@ const OfferRideScreen = () => {
               { label: "Select luggage capacity", value: "" },
               { label: "Small", value: "Small" },
               { label: "Medium", value: "Medium" },
-              { label: "Large", value: "Large" },
+              { label: "Large", value: "Large" }
             ],
             showLuggagePicker,
             setShowLuggagePicker,
-            "briefcase",
+            "briefcase"
           )}
 
           {renderInputField(
@@ -310,13 +359,21 @@ const OfferRideScreen = () => {
             setFacilities,
             "Enter Your Vehicle facilities",
             "default",
-            "options",
+            "options"
           )}
 
-          <TouchableOpacity className="bg-[#0C6C41] p-4 rounded-lg mb-8 mt-3">
-            <Text className="text-white text-center font-semibold text-lg">
-              Schedule Ride
-            </Text>
+          <TouchableOpacity
+            className="bg-[#0C6C41] p-4 rounded-lg mb-8 mt-3"
+            onPress={handleScheduleRide}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <Text className="text-lg font-semibold text-center text-white">
+                Schedule Ride
+              </Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
