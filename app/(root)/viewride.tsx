@@ -5,7 +5,9 @@ import { useFocusEffect, useRouter } from "expo-router";
 import { Avatar } from 'react-native-elements';
 import { FontAwesome } from '@expo/vector-icons';
 import Review from "./Review";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,AntDesign } from "@expo/vector-icons";
+import { router } from 'expo-router';
+
 
 
 const ViewRide = () => {
@@ -13,6 +15,14 @@ const ViewRide = () => {
  
   return (
     <ScrollView className="flex-1 bg-gray-100">
+       <View className="bg-[#0C6C41] p-4 mt-7">
+      <View className="flex-row items-center">
+        <TouchableOpacity onPress={() => router.back()}>
+          <AntDesign name="arrowleft" size={24} color="white" />
+        </TouchableOpacity>
+        <Text className="text-2xl font-bold text-white ml-4">ViewRide</Text>
+      </View>
+    </View>
       {/* Rider Info Section */}
       <View className="flex-row items-center p-4 bg-white mb-2">
         <Avatar
