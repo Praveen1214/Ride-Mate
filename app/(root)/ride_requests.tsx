@@ -17,6 +17,7 @@ import {
   AdjustmentsVerticalIcon
 } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // Base color for styling
 const baseColor = "#0C6C41";
@@ -168,13 +169,32 @@ const styles = StyleSheet.create({
 const Requests: React.FC = () => {
   const [showLongDistanceOnly, setShowLongDistanceOnly] = useState(false);
   const [offerRides, setOfferRides] = useState([]);
+  const [contact, setContact] = useState("");
+
+  useEffect(() => {
+    const getPassengerDetails = async () => {
+      try {
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+          setContact(passengerDetails.contact);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    getPassengerDetails();
+  }, []);
 
   useEffect(() => {
     // Fetch offer rides from your API
     const fetchOfferRides = async () => {
       try {
         const response = await fetch(
-          "http://192.168.43.196:5000/api/offerride/getallofferrides"
+          `http://192.168.244.196:5000/api/offerride/getallofferrides/${contact}`
         );
         const data = await response.json();
         setOfferRides(data);

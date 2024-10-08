@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Picker } from "@react-native-picker/picker";
 import { useNavigation } from "@react-navigation/native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -22,6 +22,7 @@ import axios from 'axios';
 import GoogleTextInput from "@/components/GoogleTextInput";
 import { useRoute } from "@react-navigation/native";
 import { router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OfferRideScreen = () => {
   const route = useRoute();
@@ -38,6 +39,30 @@ const OfferRideScreen = () => {
   const [availableSeats, setAvailableSeats] = useState("");
   const [luggageCapacity, setLuggageCapacity] = useState("");
   const [facilities, setFacilities] = useState("");
+
+  const [userName, setUserName] = useState("");
+  const [contact, setContact] = useState("");
+
+  useEffect(() => {
+    const getPassengerDetails = async () => {
+      try {
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+          setUserName(
+            passengerDetails.firstname + " " + passengerDetails.lastname
+          );
+          setContact(passengerDetails.contact);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    getPassengerDetails();
+  }, []);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -72,7 +97,9 @@ const OfferRideScreen = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post('http://192.168.43.196:5000/api/offerride/addofferride', {
+      const response = await axios.post('http://192.168.244.196:5000/api/offerride/addofferride', {
+        driver: userName,
+        contact: contact,
         start: pickup,
         end: drop,
         datetime: date.toISOString(),

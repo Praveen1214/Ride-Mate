@@ -17,6 +17,14 @@ const locationSchema = new Schema({
 });
 
 const offerRideSchema = new Schema({
+    driver: {
+        type: String,
+        required: true,
+    },
+    contact: {
+        type: String,
+        required: true,
+    },
     start: {
         type: locationSchema,
         required: true,
