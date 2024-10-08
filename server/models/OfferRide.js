@@ -1,14 +1,28 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-
-const offerRideSchema = new Schema({
-    start: {
+const locationSchema = new Schema({
+    latitude: {
+        type: Number,
+        required: true,
+    },
+    longitude: {
+        type: Number,
+        required: true,
+    },
+    address: {
         type: String,
         required: true,
     },
+});
+
+const offerRideSchema = new Schema({
+    start: {
+        type: locationSchema,
+        required: true,
+    },
     end: {
-        type: String,
+        type: locationSchema,
         required: true,
     },
     datetime: {
@@ -32,7 +46,6 @@ const offerRideSchema = new Schema({
     facilities: {
         type: String,
         required: true,
-        enum: ['Small', 'Medium', 'Large']
     }
 });
 

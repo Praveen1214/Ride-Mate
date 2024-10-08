@@ -13,8 +13,11 @@ import {
   ScrollView,
   Platform,
   Modal,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
+  Alert,
+  ActivityIndicator
 } from "react-native";
+import axios from 'axios';
 
 import GoogleTextInput from "@/components/GoogleTextInput";
 import { useRoute } from "@react-navigation/native";
@@ -22,9 +25,10 @@ import { router } from "expo-router";
 
 const OfferRideScreen = () => {
   const route = useRoute();
+  const { userAddress } = route.params || {};
 
-  const [pickup, setPickup] = useState("Location fetched");
-  const [drop, setDrop] = useState("");
+  const [pickup, setPickup] = useState(userAddress || {});
+  const [drop, setDrop] = useState({});
   const [date, setDate] = useState(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showVehiclePicker, setShowVehiclePicker] = useState(false);
@@ -35,7 +39,7 @@ const OfferRideScreen = () => {
   const [luggageCapacity, setLuggageCapacity] = useState("");
   const [facilities, setFacilities] = useState("");
 
-  const { userAddress } = route.params || {};
+  const [isLoading, setIsLoading] = useState(false);
 
   const navigation = useNavigation();
 
@@ -55,9 +59,48 @@ const OfferRideScreen = () => {
     setDrop(location);
   };
 
-  const handleConfirmDate = () => {
-    setShowDatePicker(false);
+  const validateInputs = () => {
+    if (!pickup.address || !drop.address || !date || !price || !vehicleType || !availableSeats || !luggageCapacity || !facilities) {
+      Alert.alert("Incomplete Information", "Please fill in all the details before scheduling the ride.");
+      return false;
+    }
+    return true;
   };
+
+  const handleScheduleRide = async () => {
+    if (!validateInputs()) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axios.post('http://192.168.43.196:5000/api/offerride/addofferride', {
+        start: pickup,
+        end: drop,
+        datetime: date.toISOString(),
+        price: parseFloat(price),
+        vehicletype: vehicleType,
+        availableSeats: parseInt(availableSeats),
+        luggagecapacity: luggageCapacity,
+        facilities: facilities
+      });
+
+      if (response.status === 200) {
+        Alert.alert("Success", "Ride scheduled successfully!", [
+          { text: "OK", onPress: () => router.push({ pathname: "/(root)/ride_requests" }) }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error details:', error.response?.data);
+      Alert.alert(
+        "Error",
+        "Failed to schedule ride. Please try again later.",
+        [{ text: "OK" }]
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  
 
   const baseColor = "#0C6C41";
   const lightColor = "#E8F5E9";
@@ -321,15 +364,16 @@ const OfferRideScreen = () => {
 
           <TouchableOpacity
             className="bg-[#0C6C41] p-4 rounded-lg mb-8 mt-3"
-            onPress={() =>
-              router.push({
-                pathname: "/(root)/ride_requests"
-              })
-            }
+            onPress={handleScheduleRide}
+            disabled={isLoading}
           >
-            <Text className="text-lg font-semibold text-center text-white">
-              Schedule Ride
-            </Text>
+            {isLoading ? (
+              <ActivityIndicator color="#ffffff" />
+            ) : (
+              <Text className="text-lg font-semibold text-center text-white">
+                Schedule Ride
+              </Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

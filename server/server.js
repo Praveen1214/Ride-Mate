@@ -37,7 +37,9 @@ app.listen(port, () => {
 // Import routes
 const uploadRoutes = require("./routes/upload");
 const PassengerRoute = require('./routes/PassengerRoute');
+const OfferRideRoute = require('./routes/OfferRideRoute');
 
 // Use routes
 app.use("/api", uploadRoutes);
 app.use('/api/passenger', PassengerRoute);
+app.use('/api/offerride', OfferRideRoute);
