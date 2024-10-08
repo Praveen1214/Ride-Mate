@@ -33,22 +33,22 @@ const UploadDocumentsScreen = () => {
     });
 
     if (!result.canceled) {
-      setDocuments(prev => ({
+      setDocuments((prev) => ({
         ...prev,
-        [documentKey]: { ...prev[documentKey], uri: result.assets[0].uri }
+        [documentKey]: { ...prev[documentKey], uri: result.assets[0].uri },
       }));
     }
   };
 
   const removeImage = (documentKey) => {
-    setDocuments(prev => ({
+    setDocuments((prev) => ({
       ...prev,
-      [documentKey]: { uri: null, progress: 0 }
+      [documentKey]: { uri: null, progress: 0 },
     }));
   };
 
   const uploadFiles = async () => {
-    if (Object.values(documents).some(doc => !doc.uri)) {
+    if (Object.values(documents).some((doc) => !doc.uri)) {
       Alert.alert(
         "Incomplete Upload",
         "Please upload all required documents before proceeding."
@@ -61,7 +61,7 @@ const UploadDocumentsScreen = () => {
       "Are you sure you want to upload these documents?",
       [
         { text: "Cancel", style: "cancel" },
-        { text: "Upload", onPress: performUpload }
+        { text: "Upload", onPress: performUpload },
       ]
     );
   };
@@ -76,7 +76,10 @@ const UploadDocumentsScreen = () => {
         const fileType = uriParts[uriParts.length - 1];
 
         formData.append(key, {
-          uri: Platform.OS === "android" ? value.uri : value.uri.replace("file://", ""),
+          uri:
+            Platform.OS === "android"
+              ? value.uri
+              : value.uri.replace("file://", ""),
           name: `${key}.${fileType}`,
           type: `image/${fileType}`,
         });
@@ -92,10 +95,15 @@ const UploadDocumentsScreen = () => {
             "Content-Type": "multipart/form-data",
           },
           onUploadProgress: (progressEvent) => {
-            const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            setDocuments(prev => 
+            const percentCompleted = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setDocuments((prev) =>
               Object.fromEntries(
-                Object.entries(prev).map(([key, value]) => [key, { ...value, progress: percentCompleted }])
+                Object.entries(prev).map(([key, value]) => [
+                  key,
+                  { ...value, progress: percentCompleted },
+                ])
               )
             );
           },
@@ -112,9 +120,12 @@ const UploadDocumentsScreen = () => {
       );
     } finally {
       setIsUploading(false);
-      setDocuments(prev => 
+      setDocuments((prev) =>
         Object.fromEntries(
-          Object.entries(prev).map(([key, value]) => [key, { ...value, progress: 0 }])
+          Object.entries(prev).map(([key, value]) => [
+            key,
+            { ...value, progress: 0 },
+          ])
         )
       );
     }
@@ -125,7 +136,9 @@ const UploadDocumentsScreen = () => {
       <Text className="text-lg font-bold mb-2">{title}</Text>
       <TouchableOpacity
         className={`border-2 rounded-lg p-2 items-center justify-center h-28 bg-white ${
-          documents[documentKey].uri ? "border-solid border-green-500" : "border-dashed border-gray-300"
+          documents[documentKey].uri
+            ? "border-solid border-green-500"
+            : "border-dashed border-gray-300"
         }`}
         onPress={() => pickImage(documentKey)}
         accessibilityLabel={`Upload ${title}`}
@@ -133,7 +146,10 @@ const UploadDocumentsScreen = () => {
       >
         {documents[documentKey].uri ? (
           <View className="w-full h-full">
-            <Image source={{ uri: documents[documentKey].uri }} className="w-full h-full rounded-lg" />
+            <Image
+              source={{ uri: documents[documentKey].uri }}
+              className="w-full h-full rounded-lg"
+            />
             <TouchableOpacity
               className="absolute top-2 right-2 bg-red-500 rounded-full p-1"
               onPress={() => removeImage(documentKey)}
@@ -149,14 +165,15 @@ const UploadDocumentsScreen = () => {
           </View>
         )}
       </TouchableOpacity>
-      {documents[documentKey].progress > 0 && documents[documentKey].progress < 100 && (
-        <View className="mt-2 bg-gray-200 rounded-full">
-          <View 
-            className="bg-green-500 h-2 rounded-full" 
-            style={{ width: `${documents[documentKey].progress}%` }}
-          />
-        </View>
-      )}
+      {documents[documentKey].progress > 0 &&
+        documents[documentKey].progress < 100 && (
+          <View className="mt-2 bg-gray-200 rounded-full">
+            <View
+              className="bg-green-500 h-2 rounded-full"
+              style={{ width: `${documents[documentKey].progress}%` }}
+            />
+          </View>
+        )}
     </View>
   );
 
@@ -166,7 +183,9 @@ const UploadDocumentsScreen = () => {
         <Text className="text-2xl font-bold text-white">Document Upload</Text>
       </View>
       <ScrollView className="flex-1 p-5 bg-gray-100">
-        <Text className="text-2xl font-bold mb-5 text-center">Personal Documents</Text>
+        <Text className="text-2xl font-bold mb-5 text-center">
+          Personal Documents
+        </Text>
 
         {renderUploadBox("Profile Photo", "profilePhoto")}
         {renderUploadBox("NIC - Front", "nicFront")}
@@ -176,10 +195,14 @@ const UploadDocumentsScreen = () => {
 
         <TouchableOpacity
           className={`p-4 rounded-lg items-center mt-5 mb-20 ${
-            Object.values(documents).some(doc => !doc.uri) ? "bg-green-200" : "bg-green-500"
+            Object.values(documents).some((doc) => !doc.uri)
+              ? "bg-green-200"
+              : "bg-green-500"
           }`}
           onPress={uploadFiles}
-          disabled={isUploading || Object.values(documents).some(doc => !doc.uri)}
+          disabled={
+            isUploading || Object.values(documents).some((doc) => !doc.uri)
+          }
           accessibilityLabel="Upload Documents"
           accessibilityHint="Double tap to start uploading all documents"
         >
@@ -197,4 +220,3 @@ const UploadDocumentsScreen = () => {
 };
 
 export default UploadDocumentsScreen;
-
