@@ -5,15 +5,18 @@ const Feedback = require('../models/feedbackModel')
 //add feedback
 router.post("/addfeedback", async (req, res) => {
 
-    const { driverid,userid, ratecount, description } = req.body; 
+    const { driverid,userid,name,date, ratecount, description,img } = req.body; 
 
     try {
         const new_feedback = new Feedback({ 
             driverid,
             userid,
+            name,
+            date,
             ratecount,
             description,
-           
+            img,
+
         });
 
         const request = await new_feedback.save(); 
