@@ -13,7 +13,10 @@ const OfferRideSection = ({ userRole }: OfferRideSectionProps) => {
   const handleNavigateToDrop = (location: { latitude: number; longitude: number; address: string; }) => {
     setDestinationLocation(location);
     router.push({
-      pathname: "/(root)/offer-ride"
+      pathname: "/(root)/offer-ride",
+      params: {
+        userAddress: userAddress
+      }
     });
   };
 
@@ -25,12 +28,12 @@ const OfferRideSection = ({ userRole }: OfferRideSectionProps) => {
   // If the user is a passenger, prompt them to register as a driver
   if (userRole === "Passenger") {
     return (
-      <View className="flex-1 items-center justify-center">
+      <View className="items-center justify-center flex-1">
         <Text className="text-lg font-bold">Become a Driver!</Text>
-        <Text className="text-gray-600 mb-4">Only drivers can offer rides. Register as a driver to offer your ride.</Text>
+        <Text className="mb-4 text-gray-600">Only drivers can offer rides. Register as a driver to offer your ride.</Text>
         <TouchableOpacity
           onPress={() => router.push("/(auth)/driverRegister")} // Navigate to register driver screen
-          className="bg-green-500 px-4 py-2 rounded"
+          className="px-4 py-2 bg-green-500 rounded"
         >
           <Text className="text-white">Register Now</Text>
         </TouchableOpacity>
