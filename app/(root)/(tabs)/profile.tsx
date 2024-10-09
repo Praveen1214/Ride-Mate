@@ -97,7 +97,7 @@ const Profile = () => {
 
   return (
     <SafeAreaView className="flex-1 bg-[#0C6C41] text-white">
-      <ScrollView className="bg-white">
+      <ScrollView className="bg-white mb-10">
         <View className="bg-[#0C6C41] p-4">
           <Text className="text-2xl font-bold text-white"> Profile </Text>
         </View>

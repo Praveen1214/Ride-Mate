@@ -72,7 +72,7 @@ const OfferRideScreen = () => {
 
     setIsLoading(true);
     try {
-      const response = await axios.post('http://192.168.43.196:5000/api/offerride/addofferride', {
+      const response = await axios.post('http://192.168.8.174:5000/api/offerride/addofferride', {
         start: pickup,
         end: drop,
         datetime: date.toISOString(),

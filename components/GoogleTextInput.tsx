@@ -63,7 +63,7 @@ const GoogleTextInput = ({
           language: "en",
         }}
         textInputProps={{
-          placeholderTextColor: "gray",
+          placeholderTextColor: "black",
           placeholder: initialLocation ?? "Where do you want to go?",
         }}
       />
