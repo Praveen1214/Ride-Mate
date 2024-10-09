@@ -18,7 +18,7 @@ import {
 } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { useNavigation } from "@react-navigation/native";
 // Base color for styling
 const baseColor = "#0C6C41";
 
@@ -165,8 +165,8 @@ const styles = StyleSheet.create({
     letterSpacing: 0.15
   }
 });
-
 const Requests: React.FC = () => {
+  const navigation = useNavigation();
   const [showLongDistanceOnly, setShowLongDistanceOnly] = useState(false);
   const [offerRides, setOfferRides] = useState([]);
   const [contact, setContact] = useState("");
@@ -194,7 +194,7 @@ const Requests: React.FC = () => {
     const fetchOfferRides = async () => {
       try {
         const response = await fetch(
-          `http://192.168.244.196:5000/api/offerride/getallofferrides/${contact}`
+          `http://192.168.43.196:5000/api/offerride/getallofferrides/${contact}`
         );
         const data = await response.json();
         setOfferRides(data);
@@ -269,16 +269,16 @@ const Requests: React.FC = () => {
   // Render a current ride fetched from the API
   const renderCurrentRide = ({ item }: { item: any }) => (
     <View style={styles.currentRouteCard}>
-      <Text style={styles.currentRouteTitle}> Current Route </Text>
+      <Text style={styles.currentRouteTitle}>Current Route</Text>
       <View className="flex-row items-center mb-4">
         <View className="flex-row items-center space-x-2">
           <MapPinIcon size={22} color={baseColor} />
-          <Text style={styles.routeText}> {item.start.address} </Text>
+          <Text style={styles.routeText}>{item.start.address}</Text>
         </View>
         <View className="w-12 h-1 mx-2 bg-gray-300" />
         <View className="flex-row items-center space-x-2">
           <MapPinIcon size={22} color="#FF6B6B" />
-          <Text style={styles.routeText}> {item.end.address} </Text>
+          <Text style={styles.routeText}>{item.end.address}</Text>
         </View>
       </View>
       <TouchableOpacity
@@ -291,6 +291,17 @@ const Requests: React.FC = () => {
           alignItems: "center",
           justifyContent: "center"
         }}
+        onPress={() =>
+          navigation.navigate('real_tracking', {
+            startAddress: item.start.address,
+            endAddress: item.end.address,
+            startLatitude: item.start.latitude,
+            startLongitude: item.start.longitude,
+            endLatitude: item.end.latitude,
+            endLongitude: item.end.longitude,
+            driverName: "Abhishek Peiris" // Use the actual driver name from your data
+          })
+        }
       >
         <Ionicons
           name="map"
