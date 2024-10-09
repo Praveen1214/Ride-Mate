@@ -38,8 +38,10 @@ app.listen(port, () => {
 const uploadRoutes = require("./routes/upload");
 const PassengerRoute = require('./routes/PassengerRoute');
 const OfferRideRoute = require('./routes/OfferRideRoute');
+const FindRideRoute = require('./routes/FindRideRoute');
 
 // Use routes
 app.use("/api", uploadRoutes);
 app.use('/api/passenger', PassengerRoute);
 app.use('/api/offerride', OfferRideRoute);
+app.use('/api/findride', FindRideRoute);
