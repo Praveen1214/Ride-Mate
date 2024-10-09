@@ -1,78 +1,148 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import MapView, { Marker, Polyline } from 'react-native-maps';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ChevronLeftIcon, PhoneIcon } from 'react-native-heroicons/outline';
-import * as Location from 'expo-location';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import MapView, { Marker, Polyline } from "react-native-maps";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { ChevronLeftIcon, PhoneIcon } from "react-native-heroicons/outline";
+import * as Location from "expo-location";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import axios from "axios";
 
 const baseColor = "#0C6C41";
 
 interface DriverLocation {
-    latitude: number;
-    longitude: number;
+  latitude: number;
+  longitude: number;
 }
 
 interface RideDetails {
-    startAddress: string;
-    endAddress: string;
-    startLatitude: number;
-    startLongitude: number;
-    endLatitude: number;
-    endLongitude: number;
-    driverName: string;
+  startAddress: string;
+  endAddress: string;
+  startLatitude: number;
+  startLongitude: number;
+  endLatitude: number;
+  endLongitude: number;
+  driverName: string;
 }
 
 const RealTimeTracking: React.FC = () => {
-    const navigation = useNavigation();
-    const route = useRoute();
-    const { startAddress, endAddress, startLatitude, startLongitude, endLatitude, endLongitude, driverName } = route.params as RideDetails;
+  const navigation = useNavigation();
+  const route = useRoute();
+  const {
+    startAddress,
+    endAddress,
+    startLatitude,
+    startLongitude,
+    endLatitude,
+    endLongitude,
+    driverName
+  } = route.params as RideDetails;
 
-    const [driverLocation, setDriverLocation] = useState<DriverLocation | null>(null);
-    const [eta, setEta] = useState<string>("Calculating...");
+  const [driverLocation, setDriverLocation] = useState<DriverLocation | null>(
+    null
+  );
+  const [eta, setEta] = useState<string>("Calculating...");
+  const [routeCoordinates, setRouteCoordinates] = useState<any[]>([]);
 
-    useEffect(() => {
-        let locationSubscription: Location.LocationSubscription;
+  const GOOGLE_DIRECTIONS_API_KEY = process.env.EXPO_PUBLIC_DIRECTIONS_API_KEY;
 
-        (async () => {
-            let { status } = await Location.requestForegroundPermissionsAsync();
-            if (status !== 'granted') {
-                console.error('Permission to access location was denied');
-                return;
-            }
+  // Function to fetch the route between driver's current location and destination
+  const fetchRoute = async (origin: DriverLocation) => {
+    try {
+      const response = await axios.get(
+        `https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${endLatitude},${endLongitude}&key=${GOOGLE_DIRECTIONS_API_KEY}`
+      );
 
-            // Start tracking the driver's location
-            locationSubscription = await Location.watchPositionAsync(
-                {
-                    accuracy: Location.Accuracy.High,
-                    timeInterval: 5000,
-                    distanceInterval: 10,
-                },
-                (location) => {
-                    setDriverLocation({
-                        latitude: location.coords.latitude,
-                        longitude: location.coords.longitude,
-                    });
+      if (response.data.routes.length) {
+        const points = response.data.routes[0].overview_polyline.points;
+        const decodedPoints = decodePolyline(points);
+        setRouteCoordinates(decodedPoints);
+      }
+    } catch (error) {
+      console.error("Error fetching route:", error);
+    }
+  };
 
-                    // Here you would typically send this location to your backend
-                    // updateDriverLocationOnServer(location.coords);
-                }
-            );
+  // Polyline decoder function to convert encoded route into usable coordinates
+  const decodePolyline = (encoded: string) => {
+    let points: any[] = [];
+    let index = 0,
+      len = encoded.length;
+    let lat = 0,
+      lng = 0;
 
-            // Simulate ETA updates
-            const etaInterval = setInterval(() => {
-                const minutes = Math.floor(Math.random() * 20) + 5;
-                setEta(`${minutes} min`);
-            }, 30000);
+    while (index < len) {
+      let b,
+        shift = 0,
+        result = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      let dlat = result & 1 ? ~(result >> 1) : result >> 1;
+      lat += dlat;
 
-            return () => {
-                if (locationSubscription) {
-                    locationSubscription.remove();
-                }
-                clearInterval(etaInterval);
-            };
-        })();
-    }, []);
+      shift = 0;
+      result = 0;
+      do {
+        b = encoded.charCodeAt(index++) - 63;
+        result |= (b & 0x1f) << shift;
+        shift += 5;
+      } while (b >= 0x20);
+      let dlng = result & 1 ? ~(result >> 1) : result >> 1;
+      lng += dlng;
+
+      points.push({
+        latitude: lat / 1e5,
+        longitude: lng / 1e5
+      });
+    }
+    return points;
+  };
+
+  useEffect(() => {
+    let locationSubscription: Location.LocationSubscription;
+
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.error("Permission to access location was denied");
+        return;
+      }
+
+      // Start tracking the driver's location
+      locationSubscription = await Location.watchPositionAsync(
+        {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 5000,
+          distanceInterval: 10
+        },
+        (location) => {
+          const newLocation = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude
+          };
+          setDriverLocation(newLocation);
+
+          // Fetch the updated route whenever the driver's location changes
+          fetchRoute(newLocation);
+        }
+      );
+
+      // Simulate ETA updates
+      const etaInterval = setInterval(() => {
+        const minutes = Math.floor(Math.random() * 20) + 5;
+        setEta(`${minutes} min`);
+      }, 30000);
+
+      return () => {
+        if (locationSubscription) {
+          locationSubscription.remove();
+        }
+        clearInterval(etaInterval);
+      };
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,7 +150,7 @@ const RealTimeTracking: React.FC = () => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <ChevronLeftIcon size={24} color={baseColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Track Your Ride</Text>
+        <Text style={styles.headerTitle}> Track Your Ride </Text>
         <TouchableOpacity>
           <PhoneIcon size={24} color={baseColor} />
         </TouchableOpacity>
@@ -92,7 +162,7 @@ const RealTimeTracking: React.FC = () => {
           latitude: startLatitude,
           longitude: startLongitude,
           latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
+          longitudeDelta: 0.0421
         }}
       >
         {driverLocation && (
@@ -114,12 +184,9 @@ const RealTimeTracking: React.FC = () => {
           description={endAddress}
           pinColor="red"
         />
-        {driverLocation && (
+        {routeCoordinates.length > 0 && (
           <Polyline
-            coordinates={[
-              driverLocation,
-              { latitude: endLatitude, longitude: endLongitude }
-            ]}
+            coordinates={routeCoordinates}
             strokeColor={baseColor}
             strokeWidth={3}
           />
@@ -129,28 +196,27 @@ const RealTimeTracking: React.FC = () => {
       <View style={styles.infoCard}>
         <View style={styles.driverInfo}>
           <View style={styles.driverAvatar}>
-            <Text style={styles.driverInitial}>{driverName[0]}</Text>
+            <Text style={styles.driverInitial}> {driverName[0]} </Text>
           </View>
           <View>
-            <Text style={styles.driverName}>{driverName}</Text>
-            <Text style={styles.vehicleInfo}>Toyota Camry • ABC 123</Text>
+            <Text style={styles.driverName}> {driverName} </Text>
+            <Text style={styles.vehicleInfo}> Toyota Camry • ABC 123 </Text>
           </View>
         </View>
         <View style={styles.etaContainer}>
-          <Text style={styles.etaLabel}>Estimated arrival</Text>
-          <Text style={styles.etaTime}>{eta}</Text>
+          <Text style={styles.etaLabel}> Estimated arrival </Text>
+          <Text style={styles.etaTime}> {eta} </Text>
         </View>
         <View style={styles.addressContainer}>
-          <Text style={styles.addressLabel}>Pickup</Text>
-          <Text style={styles.addressText}>{startAddress}</Text>
-          <Text style={styles.addressLabel}>Drop-off</Text>
-          <Text style={styles.addressText}>{endAddress}</Text>
+          <Text style={styles.addressLabel}> Pickup </Text>
+          <Text style={styles.addressText}> {startAddress} </Text>
+          <Text style={styles.addressLabel}> Drop - off </Text>
+          <Text style={styles.addressText}> {endAddress} </Text>
         </View>
       </View>
     </SafeAreaView>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
