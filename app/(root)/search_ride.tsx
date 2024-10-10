@@ -1,5 +1,5 @@
 import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
-import { Link, router, Slot } from "expo-router";
+import { router } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useEffect, useState } from "react";
@@ -8,31 +8,35 @@ import axios from "axios";
 
 const SearchRide = () => {
   const route = useRoute();
-
-  // Destructure pickup, drop, and date from route.params
   const { pickup, drop, date } = route.params;
   const [offerRides, setOfferRides] = useState([]);
 
   useEffect(() => {
-    // Fetch offer rides from your API
     const fetchOfferRides = async () => {
       try {
         const response = await axios.get(
           `http://192.168.43.196:5000/api/offerride/getallofferrides/${drop.address}`
         );
-        setOfferRides(response.data.searchride);
-        console.log(response.data.searchride);
+        setOfferRides(response.data.searchride || []);
       } catch (error) {
         console.error("Error fetching offer rides:", error);
       }
     };
     fetchOfferRides();
-  }, []);
+  }, [drop]);
+
+  const handleRideSelection = (contact) => {
+    console.log("Selected ride contact:", contact); // Add this line for debugging
+    router.push({
+      pathname: "/viewride",
+      params: { contact: contact }
+    });
+  };
 
   return (
     <View className="items-center flex-1 w-full">
+      {/* Search bar */}
       <View className="w-[339px] h-11 pl-[21px] pr-[17.25px] bg-[#e0e0e0] rounded-[10px] flex-row justify-between items-center mt-5 ">
-        {/* Placeholder Text */}
         <TextInput
           placeholder="Search Rides"
           placeholderTextColor="#000"
@@ -43,20 +47,21 @@ const SearchRide = () => {
         </View>
       </View>
 
-      {/* Map over the fetched offer rides */}
-      {offerRides.map((ride, index) => (
+      {/* Offer rides list */}
+      {offerRides.map((ride) => (
         <TouchableOpacity
-          key={ride._id}
-          onPress={() => router.navigate("/viewride", { rideId: ride._id })}
+          key={ride.contact}
+          onPress={() => handleRideSelection(ride.contact)}
           className="w-[346px] h-[158px] relative bg-[#0c6c41]/5 rounded-[15px] mt-6"
         >
+          {/* Ride details */}
           <View className="absolute left-[80px] top-[11.53px]">
             <Text className="absolute left-[165px] top-[24.22px] text-black text-[15px] font-medium">
               LKR {ride.price.toFixed(2)}
             </Text>
           </View>
 
-          {/* Labels for Pickup and Drop */}
+          {/* Pickup and Drop locations */}
           <View className="mt-2 ml-4">
             <View className="flex-row items-center mb-2">
               <View className="p-2 mr-3 bg-orange-100 rounded-full">
@@ -77,17 +82,15 @@ const SearchRide = () => {
             </View>
           </View>
 
-          {/* Line between Pickup and Drop */}
+          {/* Decorative lines */}
           <View className="absolute left-[58px] mt-12 w-[138px] border border-black/30" />
-
           <View
             className="top-[80px] w-full border border-black/30"
             style={{ borderStyle: "dotted" }}
           />
 
-          {/* Driver Info and Arrival Time */}
+          {/* Driver info and arrival time */}
           <View className="absolute left-[18px] top-[92px] flex-row justify-between items-center w-full pr-4">
-            {/* Driver and Rating */}
             <View className="flex-row items-center mt-3">
               <View className="items-center justify-center bg-gray-200 rounded-full w-9 h-9">
                 <Image
@@ -105,7 +108,6 @@ const SearchRide = () => {
               </View>
             </View>
 
-            {/* Time and Car Info */}
             <View className="flex items-center px-10 mt-2">
               <Text className="text-black text-[10px] font-semibold">
                 In 10 mins
