@@ -30,13 +30,6 @@ router.route('/addfindride').post(async (req, res) => {
     }
 });
 
-router.route('/getallfindrides').get(async (req, res) => {
-    try {
-        const allFindRides = await FindRide.find();
-        return res.status(200).json(allFindRides);
-    } catch (error) {
-        return res.status(500).json({ status: "Error fetching rides", message: error.message });
-    }
-});
+
 
 module.exports = router;

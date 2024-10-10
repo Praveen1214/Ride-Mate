@@ -77,14 +77,14 @@ const FindRideScreen = () => {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </TouchableOpacity>
-          <Text className="text-white text-xl font-bold ml-4">Find Ride</Text>
+          <Text className="ml-4 text-xl font-bold text-white">Find Ride</Text>
         </View>
 
-        <View className="bg-white rounded-lg shadow-md p-4 mt-4 mx-4">
+        <View className="p-4 mx-4 mt-4 bg-white rounded-lg shadow-md">
           {/* Pickup Section */}
           <View className="mb-2">
             <View className="flex-row items-center">
-              <Text className="text-sm text-blue-500 w-20 font-bold">
+              <Text className="w-20 text-sm font-bold text-blue-500">
                 PICKUP
               </Text>
               <GoogleTextInput
@@ -98,7 +98,7 @@ const FindRideScreen = () => {
           </View>
 
           {/* Vertical Line between Pickup and Drop */}
-          <View className="mr-4 items-left ml-5 h-10 p-0">
+          <View className="h-10 p-0 ml-5 mr-4 items-left">
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
             <View className="w-0.5 flex-1 bg-gray-300 my-1 mx-0.5" />
             <View className="w-2 h-2 bg-gray-400 rounded-full" />
@@ -107,7 +107,7 @@ const FindRideScreen = () => {
           {/* Drop Section */}
           <View>
             <View className="flex-row items-center">
-              <Text className="text-sm text-orange-500 w-20 font-bold">
+              <Text className="w-20 text-sm font-bold text-orange-500">
                 DROP
               </Text>
               <GoogleTextInput
@@ -122,7 +122,7 @@ const FindRideScreen = () => {
         </View>
 
         <ScrollView className="flex-1 px-4">
-          <View className="bg-white rounded-lg shadow-md p-4 mb-6">
+          <View className="p-4 mb-6 bg-white rounded-lg shadow-md">
             <Text className="text-sm font-bold mb-2 text-[#0C6C41]">
               DATE AND TIME
             </Text>
@@ -136,7 +136,7 @@ const FindRideScreen = () => {
                 color={baseColor}
                 className="mr-2"
               />
-              <Text className="text-gray-700 ml-4">
+              <Text className="ml-4 text-gray-700">
                 {date.toLocaleString()}
               </Text>
             </TouchableOpacity>
@@ -148,17 +148,17 @@ const FindRideScreen = () => {
               animationType="slide"
               visible={showDatePicker}
             >
-              <View className="flex-1 justify-end bg-opacity-50">
+              <View className="justify-end flex-1 bg-opacity-50">
                 <View className="bg-white rounded-t-xl">
                   <View className="flex-row justify-between items-center px-4 py-3 rounded-t-xl bg-[#0C6C41]">
                     <TouchableOpacity onPress={() => setShowDatePicker(false)}>
-                      <Text className="text-white font-semibold">Cancel</Text>
+                      <Text className="font-semibold text-white">Cancel</Text>
                     </TouchableOpacity>
-                    <Text className="text-white font-bold text-lg">
+                    <Text className="text-lg font-bold text-white">
                       Select Date & Time
                     </Text>
                     <TouchableOpacity onPress={handleConfirmDate}>
-                      <Text className="text-white font-semibold">Done</Text>
+                      <Text className="font-semibold text-white">Done</Text>
                     </TouchableOpacity>
                   </View>
                   <DateTimePicker
@@ -186,10 +186,15 @@ const FindRideScreen = () => {
             className="bg-[#0C6C41] py-4 rounded-lg mt-6 flex-row items-center justify-center"
             onPress={() => {
               setIsButtonPressed(true);
-              router.push("/search_ride");
+              // Pass pickup, drop, and date as params
+              navigation.navigate('search_ride', {
+                pickup,
+                drop,
+                date: date.toISOString(), // Send date as ISO string
+              });
             }}
           >
-            <Text className="text-white font-bold">FIND RIDE</Text>
+            <Text className="font-bold text-white">FIND RIDE</Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>

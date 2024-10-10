@@ -194,7 +194,7 @@ const Requests: React.FC = () => {
     const fetchOfferRides = async () => {
       try {
         const response = await fetch(
-          `http://192.168.43.196:5000/api/offerride/getallofferrides/${contact}`
+          `http://192.168.91.196:5000/api/offerride/getallofferrides/${contact}`
         );
         const data = await response.json();
         setOfferRides(data);

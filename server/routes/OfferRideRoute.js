@@ -69,5 +69,23 @@ router.route('/getallofferrides/:contact').post(async (req, res) => {
     }
 });
 
+router.route('/getallofferrides/:address').get(async (req, res) => {
+    const dropAddress = req.params.address;
+
+    try {
+        // Find rides where the end.address matches the provided address
+        const searchride = await OfferRide.find({ 'end.address': dropAddress });
+
+        if (!searchride || searchride.length === 0) {
+            return res.status(404).json({ status: "Ride not found" });
+        }
+
+        return res.status(200).json({ status: "Ride fetched successfully", searchride });
+
+    } catch (error) {
+        return res.status(500).json({ status: "Error fetching ride", message: error.message });
+    }
+});
+
 
 module.exports = router;
