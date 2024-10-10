@@ -26,7 +26,6 @@ const SearchRide = () => {
   }, [drop]);
 
   const handleRideSelection = (contact) => {
-    console.log("Selected ride contact:", contact); // Add this line for debugging
     router.push({
       pathname: "/viewride",
       params: { contact: contact }

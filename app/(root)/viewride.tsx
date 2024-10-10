@@ -1,18 +1,22 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Avatar } from "react-native-elements";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Review from "./Review";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 
 const ViewRide = () => {
   const [rideDetails, setRideDetails] = useState(null);
   const route = useRoute();
   const { contact } = route.params || {};
+  const [userName, setUserName] = useState("");
+  const [passengercontact, setPassengerContact] = useState("");
+  const [passengergender, setPassengerGender] = useState("");
 
   useEffect(() => {
-    console.log("Fetching ride details for contact:", contact);
     const fetchRideDetails = async () => {
       if (!contact) {
         console.error("No contact provided");
@@ -24,7 +28,6 @@ const ViewRide = () => {
         );
         if (response.data.ride && response.data.ride.length > 0) {
           setRideDetails(response.data.ride[0]);
-          console.log("Fetched ride details:", response.data.ride[0]);
         } else {
           console.log("No ride details found");
         }
@@ -33,7 +36,60 @@ const ViewRide = () => {
       }
     };
     fetchRideDetails();
-  }, [contact]);
+
+    const getPassengerDetails = async () => {
+      try {
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+          setUserName(
+            passengerDetails.firstname + "" + passengerDetails.lastname
+          );
+          setPassengerContact(passengerDetails.contact);
+          setPassengerGender(passengerDetails.gender);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    getPassengerDetails();
+  }, [contact, userName, passengercontact, passengergender]);
+
+  const handleScheduleRide = async () => {
+    try {
+      const response = await axios.post(
+        "http://192.168.43.196:5000/api/requestride/addfindride",
+        {
+          passenger: userName,
+          passengercontact,
+          passengergender,
+          driver: rideDetails.driver,
+          drivercontact: contact,
+          start: rideDetails.start,
+          end: rideDetails.end,
+          datetime: new Date(rideDetails.datetime).toISOString(),
+          price: parseFloat(rideDetails.price)
+        }
+      );
+
+      if (response.status === 200) {
+        Alert.alert("Success", "Ride request successfully!", [
+          {
+            text: "OK",
+            onPress: () => window.location.reload()
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error("Error details:", error.response?.data);
+      Alert.alert("Error", "Failed to request ride. Please try again later.", [
+        { text: "OK" }
+      ]);
+    }
+  };
 
   if (!rideDetails) {
     return <Text>Loading...</Text>;
@@ -137,7 +193,10 @@ const ViewRide = () => {
 
       {/* Action Buttons */}
       <View className="flex-row justify-between mx-2 mt-4 mb-4">
-        <TouchableOpacity className="flex-1 px-6 py-3 mr-2 bg-green-500 rounded">
+        <TouchableOpacity
+          className="flex-1 px-6 py-3 mr-2 bg-green-500 rounded"
+          onPress={handleScheduleRide}
+        >
           <Text className="font-bold text-center text-white">
             {" "}
             Request ride{" "}

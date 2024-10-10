@@ -16,12 +16,25 @@ const locationSchema = new Schema({
     },
 });
 
-const findRideSchema = new Schema({
+const requestRideSchema = new Schema({
     passenger: {
         type: String,
         required: true,
     },
-    contact: {
+    passengercontact: {
+        type: String,
+        required: true,
+    },
+    passengergender: {
+        type: String,
+        required: true,
+        enum: ['Male', 'Female']
+    },
+    driver: {
+        type: String,
+        required: true,
+    },
+    drivercontact: {
         type: String,
         required: true,
     },
@@ -37,8 +50,12 @@ const findRideSchema = new Schema({
         type: String,
         required: true,
     },
+    price: {
+        type: Number,
+        required: true,
+    },
 });
 
-const FindRide = mongoose.model('findrides', findRideSchema);
+const RequestRide = mongoose.model('requestrides', requestRideSchema);
 
-module.exports = FindRide;
+module.exports = RequestRide;
