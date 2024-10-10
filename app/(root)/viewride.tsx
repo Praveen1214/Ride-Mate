@@ -6,10 +6,10 @@ import Review from "./Review";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { router } from "expo-router";
 
 const ViewRide = () => {
   const [rideDetails, setRideDetails] = useState(null);
+  const [requestedRides, setRequestedRides] = useState([]);
   const route = useRoute();
   const { contact } = route.params || {};
   const [userName, setUserName] = useState("");
@@ -56,6 +56,27 @@ const ViewRide = () => {
     };
 
     getPassengerDetails();
+
+    const fetchReqDetails = async () => {
+      if (!contact) {
+        console.error("No contact provided");
+        return;
+      }
+      try {
+        const response = await axios.post(
+          `http://192.168.43.196:5000/api/requestride/getrequestrides/${contact}`
+        );
+        if (response.data.ride && response.data.ride.length > 0) {
+          setRequestedRides(response.data.ride);
+          console.log("Ride details found: ", response.data.ride);
+        } else {
+          console.log("No ride details found");
+        }
+      } catch (error) {
+        console.error("Error fetching ride details:", error);
+      }
+    };
+    fetchReqDetails();
   }, [contact, userName, passengercontact, passengergender]);
 
   const handleScheduleRide = async () => {
@@ -89,6 +110,37 @@ const ViewRide = () => {
         { text: "OK" }
       ]);
     }
+  };
+
+  const PassengerDetails = () => {
+    const maleCount = requestedRides.filter(
+      (ride) => ride.passengergender === "Male"
+    ).length;
+    const femaleCount = requestedRides.filter(
+      (ride) => ride.passengergender === "Female"
+    ).length;
+
+    return (
+      <View className="p-4 mx-2 mb-2 bg-white rounded-lg">
+        <Text className="mb-4 text-lg font-bold"> Passengers Details </Text>
+        <Text className="mb-2">
+          {" "}
+          {requestedRides.length} seats Booked Male - {maleCount} Female -{" "}
+          {femaleCount}{" "}
+        </Text>
+        {requestedRides.map((ride, index) => (
+          <View key={index} className="flex-row items-center mb-2">
+            <Avatar
+              rounded
+              title={ride.passenger.charAt(0)}
+              size="small"
+              containerStyle={{ backgroundColor: "black", marginRight: 10 }}
+            />
+            <Text> {ride.passenger} </Text>
+          </View>
+        ))}
+      </View>
+    );
   };
 
   if (!rideDetails) {
@@ -176,6 +228,8 @@ const ViewRide = () => {
           <RideInfoItem title="Vehicle" value={rideDetails.vehicletype} />
         </View>
       </View>
+
+      <PassengerDetails />
 
       {/* Vehicle Info */}
       <View className="p-4 mx-2 mb-2 bg-green-600 rounded-lg">

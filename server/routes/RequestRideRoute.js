@@ -40,5 +40,27 @@ router.route('/addfindride').post(async (req, res) => {
 });
 
 
+router.route('/getrequestrides/:contact').post(async (req, res) => {
+
+    const driverContact = req.params.contact;
+
+    try {
+
+        const ride = await RequestRide.find({
+            drivercontact: driverContact });
+
+        if (!ride) {
+            return res.status(404).json({ status: "Ride not found" });
+        }
+
+        return res.status(200).json({ status: "Ride is fatched", ride });
+
+    } catch (error) {
+
+        return res.status(500).json({ status: "Error with fetch ride", message: error });
+
+    }
+});
+
 
 module.exports = router;
