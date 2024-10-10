@@ -2,7 +2,7 @@ import { View, Text, Image, TextInput, TouchableOpacity } from "react-native";
 import { Link, router, Slot } from "expo-router";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native"; // Import useRoute to access params
 
 const search_ride = () => {
@@ -10,6 +10,26 @@ const search_ride = () => {
 
   // Destructure pickup, drop, and date from route.params
   const { pickup, drop, date } = route.params;
+  const [offerRides, setOfferRides] = useState([]);
+
+  useEffect(() => {
+    // Fetch offer rides from your API
+    const fetchOfferRides = async () => {
+      try {
+        const response = await fetch(
+          `http://192.168.43.196:5000/api/offerride/getallofferrides/${drop.address}`
+        );
+        const data = await response.json();
+        setOfferRides(data);
+        console.log("Offer rides:", data);
+      } catch (error) {
+        console.error("Error fetching offer rides:", error);
+      }
+    };
+
+    fetchOfferRides();
+  }, []);
+  
 
   return (
     <View className="items-center flex-1 w-full">

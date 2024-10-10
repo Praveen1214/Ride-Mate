@@ -19,6 +19,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 // Base color for styling
 const baseColor = "#0C6C41";
 
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.1
   },
   routeText: {
-    fontSize: 16,
+    fontSize: 11,
     fontWeight: "500",
     color: "#4A4A4A"
   },
@@ -179,7 +180,20 @@ const Requests: React.FC = () => {
 
         if (passengerDetailsString) {
           const passengerDetails = JSON.parse(passengerDetailsString);
-          setContact(passengerDetails.contact);
+
+          if (passengerDetails.contact) {
+            const fetchOfferRides = async () => {
+              try {
+                const response = await axios.post(
+                  `http://192.168.43.196:5000/api/offerride/getallofferrides/${passengerDetails.contact}`
+                );
+                setOfferRides(response.data.ride);
+              } catch (error) {
+                console.error("Error fetching offer rides:", error);
+              }
+            };
+            fetchOfferRides();
+          }
         }
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -187,23 +201,13 @@ const Requests: React.FC = () => {
     };
 
     getPassengerDetails();
+    
   }, []);
 
   useEffect(() => {
     // Fetch offer rides from your API
-    const fetchOfferRides = async () => {
-      try {
-        const response = await fetch(
-          `http://192.168.91.196:5000/api/offerride/getallofferrides/${contact}`
-        );
-        const data = await response.json();
-        setOfferRides(data);
-      } catch (error) {
-        console.error("Error fetching offer rides:", error);
-      }
-    };
-
-    fetchOfferRides();
+    console.log("Contact:", contact);
+    
   }, []);
 
   const filteredRequests = showLongDistanceOnly
@@ -275,7 +279,7 @@ const Requests: React.FC = () => {
           <MapPinIcon size={22} color={baseColor} />
           <Text style={styles.routeText}>{item.start.address}</Text>
         </View>
-        <View className="w-12 h-1 mx-2 bg-gray-300" />
+        <View className="w-5 h-1 mx-2 bg-gray-300" />
         <View className="flex-row items-center space-x-2">
           <MapPinIcon size={22} color="#FF6B6B" />
           <Text style={styles.routeText}>{item.end.address}</Text>
