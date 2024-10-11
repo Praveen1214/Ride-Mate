@@ -1,14 +1,29 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import axios from "axios";
+import { useFocusEffect, useRouter } from "expo-router";
 import { Avatar } from 'react-native-elements';
 import { FontAwesome } from '@expo/vector-icons';
 import Review from "./Review";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons,AntDesign } from "@expo/vector-icons";
+import { router } from 'expo-router';
+import Entypo from '@expo/vector-icons/Entypo';
+
 
 
 const ViewRide = () => {
+
+ 
   return (
     <ScrollView className="flex-1 bg-gray-100">
+       <View className="bg-[#0C6C41] p-4 mt-7">
+      <View className="flex-row items-center">
+        <TouchableOpacity onPress={() => router.back()}>
+          <AntDesign name="arrowleft" size={24} color="white" />
+        </TouchableOpacity>
+        <Text className="text-2xl font-bold text-white ml-4">ViewRide</Text>
+      </View>
+    </View>
       {/* Rider Info Section */}
       <View className="flex-row items-center p-4 bg-white mb-2">
         <Avatar
@@ -25,7 +40,13 @@ const ViewRide = () => {
           </View>
           <Text className="text-sm text-gray-500 mt-1">Joined 2024</Text>
         </View>
+        <View>
         <Text className="text-xl font-bold">LKR 275.56</Text>
+        <View className="ml-9  mt-4">
+        <Entypo name="mail" size={24} color="gray" />
+        </View>
+      
+        </View>
       </View>
 
       {/* Ride Details Section */}
@@ -98,13 +119,11 @@ const ViewRide = () => {
       </View>
 
       {/* Action Buttons */}
-      <View className="flex-row justify-between mt-4 mx-2 mb-4">
-        <TouchableOpacity className="bg-green-500 px-6 py-3 rounded flex-1 mr-2">
-          <Text className="text-white text-center font-bold">Request ride</Text>
+      <View className="flex-row justify-between mt-4 mx-1 ml-2 mr-0 mb-4 ">
+        <TouchableOpacity className="bg-green-700 px-6 py-3 w-full h-14 rounded flex-1 mr-2">
+          <Text className="text-white text-xl text-center font-bold ">Request ride</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="bg-gray-400 px-6 py-3 rounded flex-1 ml-2">
-          <Text className="text-white text-center font-bold">Message</Text>
-        </TouchableOpacity>
+       
       </View>
 
       {/* Reviews */}
