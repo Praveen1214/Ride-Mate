@@ -12,11 +12,11 @@ import Map from "@/components/Map";
 const PRIMARY_COLOR = "#0C6C41";
 
 const HomeScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation(); // Hook to get navigation object
   const [activeTab, setActiveTab] = useState("find");
   const [hasPermission, setHasPermission] = useState(false);
   const [userName, setUserName] = useState("");
-  const [userRole, setUserRole] = useState(""); // State to store user role
+  const [userRole, setUserRole] = useState("");
 
   const { userAddress, setUserLocation } = useLocationStore();
 
@@ -51,20 +51,20 @@ const HomeScreen = () => {
       let location = await Location.getCurrentPositionAsync({});
       const address = await Location.reverseGeocodeAsync({
         latitude: location.coords?.latitude,
-        longitude: location.coords?.longitude
+        longitude: location.coords?.longitude,
       });
 
       setUserLocation({
         latitude: location.coords?.latitude,
         longitude: location.coords?.longitude,
-        address: `${address[0].name}, ${address[0].region}`
+        address: `${address[0].name}, ${address[0].region}`,
       });
     })();
   }, []);
 
   const platformSpecificStyle = Platform.select({
     ios: "mb-1",
-    android: "mt-2 mb-2"
+    android: "mt-2 mb-2",
   });
 
   return (
@@ -88,7 +88,7 @@ const HomeScreen = () => {
           paddingVertical: 12,
           flexDirection: "row",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
         }}
       >
         <View style={{ flexDirection: "row", alignItems: "center" }}>
@@ -100,17 +100,13 @@ const HomeScreen = () => {
               shadowColor: "#000",
               borderRadius: 18,
               alignItems: "center",
-              justifyContent: "center"
+              justifyContent: "center",
             }}
           >
-            <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>
-              JD
-            </Text>
+            <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>JD</Text>
           </View>
           <View style={{ marginLeft: 12 }}>
-            <Text style={{ fontSize: 16, fontWeight: "600" }}>
-              Welcome! {userName}
-            </Text>
+            <Text style={{ fontSize: 16, fontWeight: "600" }}>Welcome! {userName}</Text>
             <Text style={{ fontSize: 14, color: "gray" }}> {userAddress} </Text>
           </View>
         </View>
@@ -125,7 +121,7 @@ const HomeScreen = () => {
           bottom: Platform.OS === "ios" ? 60 : 40,
           shadowOffset: { width: 0, height: 2 },
           shadowOpacity: 0.25,
-          shadowRadius: 3.84
+          shadowRadius: 3.84,
         }}
       >
         <View className={`flex-row ${platformSpecificStyle}`}>
@@ -133,7 +129,10 @@ const HomeScreen = () => {
             className={`flex-1 py-3 flex-row justify-center items-center ${
               activeTab === "find" ? "bg-[#0C6C41]" : "bg-gray-200"
             } rounded-l-md`}
-            onPress={() => setActiveTab("find")}
+            onPress={() => {
+              setActiveTab("find");
+              navigation.navigate("SearchRide"); // Navigate to SearchRide when this tab is selected
+            }}
           >
             <Ionicons
               name="location-outline"
@@ -175,7 +174,7 @@ const HomeScreen = () => {
         {activeTab === "find" ? (
           <FindRideSection />
         ) : (
-          <OfferRideSection userRole={userRole} /> // Pass the role to OfferRideSection
+          <OfferRideSection userRole={userRole} />
         )}
       </View>
     </SafeAreaView>

@@ -1,9 +1,12 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require('body-parser');
 const cors = require('cors');
 require("dotenv").config();
 
 const app = express();
+
+
 
 // Middleware
 app.use(express.json());  // To parse incoming JSON requests
@@ -28,6 +31,10 @@ connection.on("connected", () => {
   console.log("MongoDB Connection Successful");
 });
 
+// If using Express 4.16.0 or higher, you can directly use:
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Start the server
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
@@ -37,9 +44,13 @@ app.listen(port, () => {
 // Import routes
 const uploadRoutes = require("./routes/upload");
 const PassengerRoute = require('./routes/PassengerRoute');
+const feedBack = require("./routes/feedBackRoute")
 const OfferRideRoute = require('./routes/OfferRideRoute');
+
 
 // Use routes
 app.use("/api", uploadRoutes);
 app.use('/api/passenger', PassengerRoute);
+app.use("/api/feedback",feedBack)
 app.use('/api/offerride', OfferRideRoute);
+
