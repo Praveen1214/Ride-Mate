@@ -6,6 +6,7 @@ import Review from "./Review";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 
 const ViewRide = () => {
   const [rideDetails, setRideDetails] = useState(null);
@@ -15,6 +16,8 @@ const ViewRide = () => {
   const [userName, setUserName] = useState("");
   const [passengercontact, setPassengerContact] = useState("");
   const [passengergender, setPassengerGender] = useState("");
+  const navigation = useNavigation();
+  const [rideRequested, setRideRequested] = useState(false); // New state to track ride request status
 
   useEffect(() => {
     const fetchRideDetails = async () => {
@@ -45,7 +48,7 @@ const ViewRide = () => {
         if (passengerDetailsString) {
           const passengerDetails = JSON.parse(passengerDetailsString);
           setUserName(
-            passengerDetails.firstname + "" + passengerDetails.lastname
+            passengerDetails.firstname + " " + passengerDetails.lastname
           );
           setPassengerContact(passengerDetails.contact);
           setPassengerGender(passengerDetails.gender);
@@ -97,10 +100,11 @@ const ViewRide = () => {
       );
 
       if (response.status === 200) {
+        setRideRequested(true); // Set to true on successful ride request
         Alert.alert("Success", "Ride request successfully!", [
           {
             text: "OK",
-            onPress: () => window.location.reload()
+            onPress: () => console.log("Ride Requested")
           }
         ]);
       }
@@ -247,15 +251,35 @@ const ViewRide = () => {
 
       {/* Action Buttons */}
       <View className="flex-row justify-between mx-2 mt-4 mb-4">
-        <TouchableOpacity
-          className="flex-1 px-6 py-3 mr-2 bg-green-500 rounded"
-          onPress={handleScheduleRide}
-        >
-          <Text className="font-bold text-center text-white">
-            {" "}
-            Request ride{" "}
-          </Text>
-        </TouchableOpacity>
+        {!rideRequested ? (
+          <TouchableOpacity
+            className="flex-1 px-6 py-3 mr-2 bg-green-500 rounded"
+            onPress={handleScheduleRide}
+          >
+            <Text className="font-bold text-center text-white">
+              {" "}
+              Request Ride{" "}
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            className="flex-1 px-6 py-3 mr-2 bg-green-500 rounded"
+            onPress={() =>
+              navigation.navigate("real_tracking", {
+                startAddress: rideDetails.start,
+                endAddress: rideDetails.end,
+                startLatitude: rideDetails.start.latitude,
+                startLongitude: rideDetails.start.longitude,
+                endLatitude: rideDetails.end.latitude,
+                endLongitude: rideDetails.end.longitude,
+                driverName: rideDetails.driver,
+                passengerDetails: requestedRides // Pass all requested rides (passengers)
+              })
+            }
+          >
+            <Text className="font-bold text-center text-white"> View Map </Text>
+          </TouchableOpacity>
+        )}
         <TouchableOpacity className="flex-1 px-6 py-3 ml-2 bg-gray-400 rounded">
           <Text className="font-bold text-center text-white"> Message </Text>
         </TouchableOpacity>

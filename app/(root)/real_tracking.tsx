@@ -145,76 +145,90 @@ const RealTimeTracking: React.FC = () => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <ChevronLeftIcon size={24} color={baseColor} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}> Track Your Ride </Text>
-        <TouchableOpacity>
-          <PhoneIcon size={24} color={baseColor} />
-        </TouchableOpacity>
-      </View>
+    <SafeAreaView style= { styles.container } >
+    <View style={ styles.header }>
+      <TouchableOpacity onPress={ () => navigation.goBack() }>
+        <ChevronLeftIcon size={ 24 } color = { baseColor } />
+          </TouchableOpacity>
+          < Text style = { styles.headerTitle } > Track Your Ride </Text>
+            < TouchableOpacity >
+            <PhoneIcon size={ 24 } color = { baseColor } />
+              </TouchableOpacity>
+              </View>
 
-      <MapView
-        style={styles.map}
-        initialRegion={{
-          latitude: startLatitude,
-          longitude: startLongitude,
-          latitudeDelta: 0.0922,
+              < MapView
+  style = { styles.map }
+  initialRegion = {{
+    latitude: startLatitude,
+      longitude: startLongitude,
+        latitudeDelta: 0.0922,
           longitudeDelta: 0.0421
-        }}
+  }
+}
       >
-        {driverLocation && (
-          <Marker
-            coordinate={driverLocation}
-            title="Driver"
-            description="Current driver location"
-          />
+  { driverLocation && (
+    <Marker
+            coordinate={ driverLocation }
+title = "Driver"
+description = "Current driver location"
+  />
         )}
-        <Marker
-          coordinate={{ latitude: startLatitude, longitude: startLongitude }}
-          title="Start"
-          description={startAddress}
-          pinColor={baseColor}
-        />
-        <Marker
-          coordinate={{ latitude: endLatitude, longitude: endLongitude }}
-          title="Destination"
-          description={endAddress}
-          pinColor="red"
-        />
-        {routeCoordinates.length > 0 && (
-          <Polyline
-            coordinates={routeCoordinates}
-            strokeColor={baseColor}
-            strokeWidth={3}
-          />
+<Marker
+          coordinate={ { latitude: startLatitude, longitude: startLongitude } }
+title = "Start"
+description = { startAddress }
+pinColor = { baseColor }
+  />
+  <Marker
+          coordinate={ { latitude: endLatitude, longitude: endLongitude } }
+title = "Destination"
+description = { endAddress }
+pinColor = "red"
+  />
+  <Marker
+          coordinate={ { latitude: 6.9119651, longitude: 79.9722537 } } // Passenger 1 Location
+title = "Passenger 1"
+description = "SPAR Supermarket – Malabe, Kaduwela Road, Malabe, Sri Lanka"
+pinColor = "blue"
+  />
+  <Marker
+          coordinate={ { latitude: 6.9146775, longitude: 79.9729445 } } // Passenger 2 Location
+title = "Passenger 2"
+description = "SLIIT, New Kandy Road, Malabe, Sri Lanka"
+pinColor = "blue"
+  />
+{
+  routeCoordinates.length > 0 && (
+    <Polyline
+            coordinates={ routeCoordinates }
+strokeColor = { baseColor }
+strokeWidth = { 3}
+  />
         )}
-      </MapView>
+</MapView>
 
-      <View style={styles.infoCard}>
-        <View style={styles.driverInfo}>
-          <View style={styles.driverAvatar}>
-            <Text style={styles.driverInitial}> {driverName[0]} </Text>
+  < View style = { styles.infoCard } >
+    <View style={ styles.driverInfo }>
+      <View style={ styles.driverAvatar }>
+        <Text style={ styles.driverInitial }> { driverName[0]} </Text>
           </View>
-          <View>
-            <Text style={styles.driverName}> {driverName} </Text>
-            <Text style={styles.vehicleInfo}> Toyota Camry • ABC 123 </Text>
-          </View>
-        </View>
-        <View style={styles.etaContainer}>
-          <Text style={styles.etaLabel}> Estimated arrival </Text>
-          <Text style={styles.etaTime}> {eta} </Text>
-        </View>
-        <View style={styles.addressContainer}>
-          <Text style={styles.addressLabel}> Pickup </Text>
-          <Text style={styles.addressText}> {startAddress} </Text>
-          <Text style={styles.addressLabel}> Drop - off </Text>
-          <Text style={styles.addressText}> {endAddress} </Text>
-        </View>
-      </View>
-    </SafeAreaView>
+          < View >
+          <Text style={ styles.driverName }> { driverName } </Text>
+            < Text style = { styles.vehicleInfo } > Toyota Camry • ABC 123 </Text>
+              </View>
+              </View>
+              < View style = { styles.etaContainer } >
+                <Text style={ styles.etaLabel }> Estimated arrival </Text>
+                  < Text style = { styles.etaTime } > { eta } </Text>
+                    </View>
+                    < View style = { styles.addressContainer } >
+                      <Text style={ styles.addressLabel }> Pickup </Text>
+                        < Text style = { styles.addressText } > { startAddress } </Text>
+                          < Text style = { styles.addressLabel } > Drop - off </Text>
+                            < Text style = { styles.addressText } > { endAddress } </Text>
+                              </View>
+                              </View>
+                              </SafeAreaView>
   );
 };
 
