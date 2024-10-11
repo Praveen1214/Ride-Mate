@@ -16,12 +16,25 @@ const locationSchema = new Schema({
     },
 });
 
-const offerRideSchema = new Schema({
+const requestRideSchema = new Schema({
+    passenger: {
+        type: String,
+        required: true,
+    },
+    passengercontact: {
+        type: String,
+        required: true,
+    },
+    passengergender: {
+        type: String,
+        required: true,
+        enum: ['Male', 'Female']
+    },
     driver: {
         type: String,
         required: true,
     },
-    contact: {
+    drivercontact: {
         type: String,
         required: true,
     },
@@ -41,22 +54,8 @@ const offerRideSchema = new Schema({
         type: Number,
         required: true,
     },
-    vehicletype: {
-        type: String,
-        required: true,
-        enum: ['Sedan', 'SUV', 'Hatchback', 'Van']
-    },
-    luggagecapacity: {
-        type: String,
-        required: true,
-        enum: ['Small', 'Medium', 'Large']
-    },
-    facilities: {
-        type: String,
-        required: true,
-    }
 });
 
-const OfferRide = mongoose.model('offerrides', offerRideSchema);
+const RequestRide = mongoose.model('requestrides', requestRideSchema);
 
-module.exports = OfferRide;
+module.exports = RequestRide;

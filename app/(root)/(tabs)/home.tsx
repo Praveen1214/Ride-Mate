@@ -68,8 +68,8 @@ const HomeScreen = () => {
   });
 
   return (
-    <SafeAreaView className={`flex-1 bg-gray-100 ${platformSpecificStyle} text-black`}>
-      <StatusBar barStyle="dark-content" backgroundColor="white" />
+    <SafeAreaView className={`flex-1 bg-white ${platformSpecificStyle} text-black`}>
+      <StatusBar barStyle="dark-content" backgroundColor="black" />
 
       {/* Map View */}
       <View className="flex flex-row items-center h-full bg-transparent">
