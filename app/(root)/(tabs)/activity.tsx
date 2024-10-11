@@ -38,7 +38,7 @@ const ActivityCard: React.FC<{ activity: Activity }> = ({ activity }) => {
 
   return (
     <View className="bg-white p-5 mx-4 my-3 rounded-lg shadow-md">
-      <StatusBar barStyle="light-content" backgroundColor="#fffff" />
+      <StatusBar barStyle="dark-content" backgroundColor="black" />
       <View className="flex-row justify-between mb-3">
         <View>
           <Text className="text-sm font-medium text-gray-800">

@@ -97,9 +97,11 @@ const OfferRideScreen = () => {
 
     setIsLoading(true);
     try {
+
       const response = await axios.post('http://192.168.43.196:5000/api/offerride/addofferride', {
         driver: userName,
         contact: contact,
+
         start: pickup,
         end: drop,
         datetime: date.toISOString(),
