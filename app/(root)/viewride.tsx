@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Avatar } from "react-native-elements";
@@ -151,8 +152,17 @@ const ViewRide = () => {
     return <Text>Loading...</Text>;
   }
 
+
   return (
     <ScrollView className="flex-1 bg-gray-100">
+       <View className="bg-[#0C6C41] p-4 mt-7">
+      <View className="flex-row items-center">
+        <TouchableOpacity onPress={() => router.back()}>
+          <AntDesign name="arrowleft" size={24} color="white" />
+        </TouchableOpacity>
+        <Text className="text-2xl font-bold text-white ml-4">ViewRide</Text>
+      </View>
+    </View>
       {/* Rider Info Section */}
       <View className="flex-row items-center p-4 mb-2 bg-white">
         <Avatar
@@ -175,10 +185,12 @@ const ViewRide = () => {
             Contact: {rideDetails.contact}{" "}
           </Text>
         </View>
+
         <Text className="text-xl font-bold">
           {" "}
           LKR {rideDetails.price.toFixed(2)}{" "}
         </Text>
+
       </View>
 
       {/* Ride Details Section */}
@@ -250,6 +262,7 @@ const ViewRide = () => {
       </View>
 
       {/* Action Buttons */}
+
       <View className="flex-row justify-between mx-2 mt-4 mb-4">
         {!rideRequested ? (
           <TouchableOpacity
@@ -282,7 +295,9 @@ const ViewRide = () => {
         )}
         <TouchableOpacity className="flex-1 px-6 py-3 ml-2 bg-gray-400 rounded">
           <Text className="font-bold text-center text-white"> Message </Text>
+
         </TouchableOpacity>
+       
       </View>
 
       {/* Reviews */}

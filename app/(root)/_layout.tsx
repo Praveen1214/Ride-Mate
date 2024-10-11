@@ -8,6 +8,8 @@ const Layout = () => {
       <Stack.Screen name="find-ride" options={{ headerShown: false }} />
       <Stack.Screen name="offer-ride" options={{ headerShown: false }} />
       <Stack.Screen name="real_tracking" options={{ headerShown: false }} />
+      <Stack.Screen name="SearchRide" options={{ headerShown: false }} />
+      <Stack.Screen name="viewride" options={{ headerShown: false }} />
     </Stack>
   );
 };
