@@ -131,7 +131,6 @@ const HomeScreen = () => {
             } rounded-l-md`}
             onPress={() => {
               setActiveTab("find");
-              navigation.navigate("SearchRide"); // Navigate to SearchRide when this tab is selected
             }}
           >
             <Ionicons

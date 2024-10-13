@@ -13,7 +13,7 @@ const ReviewCard = ({ name, ratecount, date, description, img }) => {
         />
         <View className="flex-1 ml-4">
           <View className="flex-row items-center justify-between">
-            <Text className="font-bold text-lg">{name}</Text>
+            <Text className="text-lg font-bold">{name}</Text>
             <View className="flex-row items-center">
               {Array.from({ length: 5 }, (_, index) => (
                 <FontAwesome
@@ -25,11 +25,11 @@ const ReviewCard = ({ name, ratecount, date, description, img }) => {
               ))}
             </View>
           </View>
-          <Text className="text-gray-500 text-sm">{date}</Text>
+          <Text className="text-sm text-gray-500">{date}</Text>
         </View>
       </View>
       <View className='px-5'>
-        <Text className="text-gray-500 mt-2 mb-4">{description}</Text>
+        <Text className="mt-2 mb-4 text-gray-500">{description}</Text>
       </View>
     </View>
   );
@@ -44,7 +44,7 @@ const Review = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://192.168.8.154:5000/api/feedback/getallfeedback"
+        "http://192.168.43.196:5000/api/feedback/getallfeedback"
       );
       setFeedback(response.data);
       setLoading(false);
@@ -61,7 +61,7 @@ const Review = () => {
 
   if (loading) {
     return (
-      <View className="flex-1 justify-center items-center">
+      <View className="items-center justify-center flex-1">
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
@@ -69,7 +69,7 @@ const Review = () => {
 
   if (error) {
     return (
-      <View className="flex-1 justify-center items-center">
+      <View className="items-center justify-center flex-1">
         <Text className="text-red-500">{error}</Text>
       </View>
     );
@@ -77,8 +77,8 @@ const Review = () => {
 
   return (
     <View className="flex-1 bg-white">
-      <View className="bg-gray-300 h-12 justify-center px-4">
-        <Text className="text-black text-xl font-semibold">Reviews</Text>
+      <View className="justify-center h-12 px-4 bg-gray-300">
+        <Text className="text-xl font-semibold text-black">Reviews</Text>
       </View>
       <ScrollView>
         {feedback.map((review) => (
