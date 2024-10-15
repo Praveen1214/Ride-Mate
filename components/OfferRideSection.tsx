@@ -29,13 +29,12 @@ const OfferRideSection = ({ userRole }: OfferRideSectionProps) => {
   if (userRole === "Passenger") {
     return (
       <View className="items-center justify-center flex-1">
-        <Text className="text-lg font-bold">Become a Driver!</Text>
-        <Text className="mb-4 text-gray-600">Only drivers can offer rides. Register as a driver to offer your ride.</Text>
+        <Text className="text-[14px] mb-2 mt-3 text-red-600">Register as a driver to offer your ride.!</Text>
         <TouchableOpacity
           onPress={() => router.push("/(auth)/driverRegister")} // Navigate to register driver screen
-          className="px-4 py-2 bg-green-500 rounded"
+          className="bg-green-800 rounded-full mb-3 "
         >
-          <Text className="text-white">Register Now</Text>
+          <Text className="py-2 px-6 text-white text-lg">Register Now !</Text>
         </TouchableOpacity>
       </View>
     );

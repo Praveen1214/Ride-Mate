@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   SafeAreaView,
+  StatusBar,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
@@ -177,8 +178,14 @@ const UploadDocumentsScreen = () => {
     </View>
   );
 
+  const platformSpecificStyle = Platform.select({
+    ios: "mb-1",
+    android: "mt-2 mb-2"
+  });
+
   return (
-    <SafeAreaView className="flex-1 bg-[#0C6C41]">
+    <SafeAreaView className={`flex-1 bg-white ${platformSpecificStyle} text-black`}>
+      <StatusBar barStyle="dark-content" backgroundColor="black" />
       <View className="bg-[#0C6C41] p-4">
         <Text className="text-2xl font-bold text-white">Document Upload</Text>
       </View>
@@ -194,7 +201,7 @@ const UploadDocumentsScreen = () => {
         {renderUploadBox("License - Rear", "licenseRear")}
 
         <TouchableOpacity
-          className={`p-4 rounded-lg items-center mt-5 mb-20 ${
+          className={`p-4 rounded-lg items-center mt-5 mb-10 ${
             Object.values(documents).some((doc) => !doc.uri)
               ? "bg-green-200"
               : "bg-green-500"

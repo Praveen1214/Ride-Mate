@@ -17,7 +17,7 @@ const passengerSchema = new Schema({
     },
     gender: {
         type: String,
-        required: false,
+        required: true, // Abhishek Change it. An error occur please change false
         enum: ['Male', 'Female']
     },
     contact: {
