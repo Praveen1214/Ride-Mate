@@ -2,17 +2,20 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, ScrollView, TouchableOpacity, Alert } from "react-native";
 import { Avatar } from "react-native-elements";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import Review from "./Review";
 import axios from "axios";
 import { useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
+import { FontAwesome, Ionicons, AntDesign } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+
 
 const ViewRide = () => {
   const [rideDetails, setRideDetails] = useState(null);
   const [requestedRides, setRequestedRides] = useState([]);
   const route = useRoute();
+  const router = useRouter();
   const { contact } = route.params || {};
   const [userName, setUserName] = useState("");
   const [passengercontact, setPassengerContact] = useState("");
@@ -160,7 +163,7 @@ const ViewRide = () => {
         <TouchableOpacity onPress={() => router.back()}>
           <AntDesign name="arrowleft" size={24} color="white" />
         </TouchableOpacity>
-        <Text className="text-2xl font-bold text-white ml-4">ViewRide</Text>
+        <Text className="ml-4 text-2xl font-bold text-white">ViewRide</Text>
       </View>
     </View>
       {/* Rider Info Section */}
