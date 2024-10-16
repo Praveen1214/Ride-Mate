@@ -1,29 +1,21 @@
 import { Ionicons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Switch,
-  StyleSheet
-} from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, Text, TouchableOpacity, FlatList, Switch, RefreshControl, StyleSheet } from "react-native";
 import {
   ChevronLeftIcon,
   MapPinIcon,
   PhoneIcon,
   ChatBubbleLeftIcon,
   StarIcon,
-  AdjustmentsVerticalIcon
+  AdjustmentsVerticalIcon,
 } from "react-native-heroicons/outline";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
-// Base color for styling
+
 const baseColor = "#0C6C41";
 
-// RideRequest mock data
 interface RideRequest {
   id: string;
   pickup: string;
@@ -36,229 +28,98 @@ interface RideRequest {
 }
 
 const rideRequests: RideRequest[] = [
-  {
-    id: "1",
-    pickup: "Anuradhapura",
-    drop: "Maradana",
-    riderName: "Ahmed Ali",
-    estimatedEarnings: "$25.00",
-    distance: "15.5 km",
-    duration: "25 min",
-    passengerRating: 4.7
-  },
-  {
-    id: "2",
-    pickup: "Anuradhapura",
-    drop: "Colombo",
-    riderName: "Samantha Perera",
-    estimatedEarnings: "$35.00",
-    distance: "22 km",
-    duration: "40 min",
-    passengerRating: 4.9
-  }
+  // ... (previous mock data)
 ];
 
-// Styling
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#F7F7F7"
-  },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 16,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E0E0E0"
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: "#333333",
-    letterSpacing: 0.15
-  },
-  currentRouteCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    margin: 16,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  currentRouteTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#333333",
-    marginBottom: 12,
-    letterSpacing: 0.1
-  },
-  routeText: {
-    fontSize: 11,
-    fontWeight: "500",
-    color: "#4A4A4A"
-  },
-  rideRequestCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3
-  },
-  earningsText: {
-    fontSize: 21,
-    fontWeight: "700",
-    color: baseColor,
-    letterSpacing: 0.25
-  },
-  ratingText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: "#F59E0B",
-    marginLeft: 4
-  },
-  locationLabel: {
-    fontSize: 10,
-    fontWeight: "500",
-    color: "#6B7280",
-    marginBottom: 4,
-    letterSpacing: 0.4,
-    textTransform: "uppercase"
-  },
-  locationText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#333333",
-    marginLeft: 8,
-    letterSpacing: 0.15
-  },
-  infoText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: "#6B7280",
-    letterSpacing: 0.1
-  },
-  actionButton: {
-    padding: 8,
-    borderRadius: 20,
-    backgroundColor: "#F0F0F0"
-  },
-  switchLabel: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#4A4A4A",
-    letterSpacing: 0.1
-  },
-  emptyStateText: {
-    fontSize: 16,
-    fontWeight: "500",
-    color: "#6B7280",
-    textAlign: "center",
-    marginTop: 24,
-    letterSpacing: 0.15
-  }
-});
 const Requests: React.FC = () => {
   const navigation = useNavigation();
   const [showLongDistanceOnly, setShowLongDistanceOnly] = useState(false);
   const [offerRides, setOfferRides] = useState([]);
   const [contact, setContact] = useState("");
+  const [refreshing, setRefreshing] = useState(false);
+  const [sortOrder, setSortOrder] = useState("default");
 
   useEffect(() => {
-    const getPassengerDetails = async () => {
-      try {
-        const passengerDetailsString =
-          await AsyncStorage.getItem("passengerDetails");
-
-        if (passengerDetailsString) {
-          const passengerDetails = JSON.parse(passengerDetailsString);
-
-          if (passengerDetails.contact) {
-            const fetchOfferRides = async () => {
-              try {
-                const response = await axios.post(
-                  `http://192.168.43.196:5000/api/offerride/getallofferrides/${passengerDetails.contact}`
-                );
-                setOfferRides(response.data.ride);
-              } catch (error) {
-                console.error("Error fetching offer rides:", error);
-              }
-            };
-            fetchOfferRides();
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching user details:", error);
-      }
-    };
-
-    getPassengerDetails();
-    
+    fetchPassengerDetails();
   }, []);
 
-  useEffect(() => {
-    // Fetch offer rides from your API
-    console.log("Contact:", contact);
-    
+  const fetchPassengerDetails = async () => {
+    try {
+      const passengerDetailsString = await AsyncStorage.getItem("passengerDetails");
+      if (passengerDetailsString) {
+        const passengerDetails = JSON.parse(passengerDetailsString);
+        if (passengerDetails.contact) {
+          setContact(passengerDetails.contact);
+          fetchOfferRides(passengerDetails.contact);
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+    }
+  };
+
+  const fetchOfferRides = async (contactNumber) => {
+    try {
+      const response = await axios.post(
+        `http://192.168.8.174:5000/api/offerride/getallofferrides/${contactNumber}`
+      );
+      setOfferRides(response.data.ride);
+    } catch (error) {
+      console.error("Error fetching offer rides:", error);
+    }
+  };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    fetchPassengerDetails().then(() => setRefreshing(false));
   }, []);
 
   const filteredRequests = showLongDistanceOnly
     ? rideRequests.filter((request) => parseFloat(request.distance) > 20)
     : rideRequests;
 
-  // Render a ride request (from the mock data)
+  const sortedRequests = [...filteredRequests].sort((a, b) => {
+    if (sortOrder === "earnings") {
+      return parseFloat(b.estimatedEarnings.slice(1)) - parseFloat(a.estimatedEarnings.slice(1));
+    } else if (sortOrder === "distance") {
+      return parseFloat(b.distance) - parseFloat(a.distance);
+    }
+    return 0;
+  });
+
   const renderRideRequest = ({ item }: { item: RideRequest }) => (
-    <TouchableOpacity style={[styles.rideRequestCard, styles.shadow]}>
-      {/* Earnings and Rating Section */}
-      <View className="flex-row items-center justify-between mb-4">
-        <Text style={[styles.earningsText, styles.highlightText]}>
-          {item.estimatedEarnings}
-        </Text>
-        <View className="flex-row items-center">
+    <TouchableOpacity style={styles.rideRequestCard}>
+      <View style={styles.cardHeader}>
+        <Text style={styles.earnings}>{item.estimatedEarnings}</Text>
+        <View style={styles.ratingContainer}>
           <StarIcon size={18} color="#FFD700" />
-          <Text style={styles.ratingText}>
-            {item.passengerRating.toFixed(1)}
-          </Text>
+          <Text style={styles.rating}>{item.passengerRating.toFixed(1)}</Text>
         </View>
       </View>
 
-      {/* Pickup and Drop-off Section */}
-      <View className="mb-2">
-        <View className="mb-3">
-          <Text style={styles.locationLabel}> Pickup Location </Text>
-          <View className="flex-row items-center">
+      <View style={styles.locationContainer}>
+        <View style={styles.locationItem}>
+          <Text style={styles.locationLabel}>Pickup Location</Text>
+          <View style={styles.locationInfo}>
             <MapPinIcon size={22} color={baseColor} />
-            <Text style={styles.locationText}> {item.pickup} </Text>
+            <Text style={styles.locationText}>{item.pickup}</Text>
           </View>
         </View>
-        <View>
-          <Text style={styles.locationLabel}> Drop - off Location </Text>
-          <View className="flex-row items-center">
+        <View style={styles.locationItem}>
+          <Text style={styles.locationLabel}>Drop-off Location</Text>
+          <View style={styles.locationInfo}>
             <MapPinIcon size={22} color="#FF6B6B" />
-            <Text style={styles.locationText}> {item.drop} </Text>
+            <Text style={styles.locationText}>{item.drop}</Text>
           </View>
         </View>
       </View>
 
-      {/* Distance and Duration Section */}
-      <View className="flex-row items-center justify-between">
-        <View className="flex-row items-center">
-          <Text style={styles.infoText}> {item.distance} </Text>
-          <Text style={[styles.infoText, { marginLeft: 12 }]}>
-            {item.duration}
-          </Text>
+      <View style={styles.footer}>
+        <View style={styles.tripInfo}>
+          <Text style={styles.tripInfoText}>{item.distance}</Text>
+          <Text style={styles.tripInfoText}>{item.duration}</Text>
         </View>
-
-        {/* Action Buttons (Call and Chat) */}
-        <View className="flex-row space-x-4">
+        <View style={styles.actionButtons}>
           <TouchableOpacity style={styles.actionButton}>
             <PhoneIcon size={22} color={baseColor} />
           </TouchableOpacity>
@@ -270,31 +131,29 @@ const Requests: React.FC = () => {
     </TouchableOpacity>
   );
 
-  // Render a current ride fetched from the API
-  const renderCurrentRide = ({ item }: { item: any }) => (
-    <View style={styles.currentRouteCard}>
-      <Text style={styles.currentRouteTitle}>Current Route</Text>
-      <View className="flex-row items-center mb-4">
-        <View className="flex-row items-center space-x-2">
-          <MapPinIcon size={22} color={baseColor} />
+  const renderCurrentRide = ({ item }) => (
+    <View style={styles.currentRideCard}>
+      <Text style={styles.currentRideTitle}>Your Current Ride</Text>
+
+      <View style={styles.routeContainer}>
+        <View style={styles.routePoint}>
+          <MapPinIcon size={24} color={baseColor} />
           <Text style={styles.routeText}>{item.start.address}</Text>
         </View>
-        <View className="w-5 h-1 mx-2 bg-gray-300" />
-        <View className="flex-row items-center space-x-2">
-          <MapPinIcon size={22} color="#FF6B6B" />
+        <View style={styles.routeIndicator} />
+        <View style={styles.routePoint}>
+          <MapPinIcon size={24} color="#FF6B6B" />
           <Text style={styles.routeText}>{item.end.address}</Text>
         </View>
       </View>
+
+      <View style={styles.rideInfo}>
+        <Text style={styles.rideInfoText}>Driver: Abhishek Peiris</Text>
+        <Text style={styles.rideInfoText}>Estimated Time: 15 mins</Text>
+      </View>
+
       <TouchableOpacity
-        style={{
-          backgroundColor: "#E8F5E9",
-          padding: 16,
-          borderRadius: 8,
-          marginTop: 16,
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center"
-        }}
+        style={styles.mapButton}
         onPress={() =>
           navigation.navigate('real_tracking', {
             startAddress: item.start.address,
@@ -303,52 +162,49 @@ const Requests: React.FC = () => {
             startLongitude: item.start.longitude,
             endLatitude: item.end.latitude,
             endLongitude: item.end.longitude,
-            driverName: "Abhishek Peiris" // Use the actual driver name from your data
+            driverName: "Abhishek Peiris",
           })
         }
       >
-        <Ionicons
-          name="map"
-          size={24}
-          color={baseColor}
-          style={{ marginRight: 8 }}
-        />
-        <Text style={{ color: baseColor, fontWeight: "bold" }}>
-          VIEW LOCATION ON MAP
-        </Text>
+        <Ionicons name="map" size={24} color="white" style={styles.mapIcon} />
+        <Text style={styles.mapButtonText}>VIEW ON MAP</Text>
       </TouchableOpacity>
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <ChevronLeftIcon size={24} color={baseColor} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}> Available Rides </Text>
-        <TouchableOpacity>
+        <Text style={styles.headerTitle}>Available Rides</Text>
+        <TouchableOpacity onPress={() => {
+          // Toggle between sorting options
+          setSortOrder(sortOrder === "default" ? "earnings" : sortOrder === "earnings" ? "distance" : "default");
+        }}>
           <AdjustmentsVerticalIcon size={24} color={baseColor} />
         </TouchableOpacity>
       </View>
-      {/* List of Offer Rides fetched from the API */}
+
       <FlatList
         data={offerRides}
-        renderItem={renderCurrentRide} // Rendering offer rides fetched from API
+        renderItem={renderCurrentRide}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
+        contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <Text style={styles.emptyStateText}>
+          <Text style={styles.emptyListText}>
             No offer rides available at the moment.
           </Text>
         }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
 
-      {/* Toggle for Long Distance Filter */}
-      <View className="flex-row items-center justify-between px-4 mb-4">
-        <Text style={styles.switchLabel}> Long distance only </Text>
+      <View style={styles.filterContainer}>
+        <Text style={styles.filterText}>Long distance only</Text>
         <Switch
           value={showLongDistanceOnly}
           onValueChange={setShowLongDistanceOnly}
@@ -357,21 +213,204 @@ const Requests: React.FC = () => {
         />
       </View>
 
-      {/* List of Mock Ride Requests */}
       <FlatList
-        data={filteredRequests}
-        renderItem={renderRideRequest} // Rendering mock ride requests
+        data={sortedRequests}
+        renderItem={renderRideRequest}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
+        contentContainerStyle={styles.listContent}
         ListEmptyComponent={
-          <Text style={styles.emptyStateText}>
+          <Text style={styles.emptyListText}>
             No ride requests available at the moment.
           </Text>
+        }
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 16,
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e0e0e0',
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  listContent: {
+    padding: 16,
+  },
+  emptyListText: {
+    textAlign: 'center',
+    color: '#888',
+    marginTop: 24,
+  },
+  filterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
+  },
+  filterText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  rideRequestCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  earnings: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: baseColor,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rating: {
+    marginLeft: 4,
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#FFD700',
+  },
+  locationContainer: {
+    marginBottom: 16,
+  },
+  locationItem: {
+    marginBottom: 12,
+  },
+  locationLabel: {
+    fontSize: 12,
+    textTransform: 'uppercase',
+    color: '#888',
+    marginBottom: 4,
+  },
+  locationInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationText: {
+    marginLeft: 8,
+    fontSize: 16,
+    color: '#333',
+  },
+  footer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  tripInfo: {
+    flexDirection: 'row',
+  },
+  tripInfoText: {
+    marginRight: 16,
+    fontSize: 14,
+    color: '#666',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+  },
+  actionButton: {
+    padding: 8,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 20,
+    marginLeft: 12,
+  },
+  currentRideCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  currentRideTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 16,
+  },
+  routeContainer: {
+    marginBottom: 16,
+  },
+  routePoint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  routeIndicator: {
+    width: 2,
+    height: 24,
+    backgroundColor: '#ccc',
+    marginLeft: 11,
+    marginVertical: 4,
+  },
+  routeText: {
+    marginLeft: 12,
+    fontSize: 16,
+    color: '#333',
+  },
+  rideInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 16,
+  },
+  rideInfoText: {
+    fontSize: 14,
+    color: '#666',
+  },
+  mapButton: {
+    backgroundColor: baseColor,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    borderRadius: 8,
+  },
+  mapIcon: {
+    marginRight: 8,
+  },
+  mapButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
 
 export default Requests;
