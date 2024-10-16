@@ -88,7 +88,7 @@ const Giverate: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible
         {/* Header */}
         <View style={tw`flex-row justify-end`}>
           <TouchableOpacity onPress={onClose}>
-            <Text style={tw`text-gray-500 text-lg`}>Skip</Text>
+            <Text style={tw`text-lg text-gray-500`}>Skip</Text>
           </TouchableOpacity>
         </View>
 
@@ -96,10 +96,10 @@ const Giverate: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible
         <View style={tw`items-center my-5`}>
           <Image
             source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUuR6lY1HPFS4Q_R2A5r70ECdchXmR_n1b8g&s' }} // Replace with actual image URL
-            style={tw`w-15 h-15 rounded-full bg-gray-300`}
+            style={tw`bg-gray-300 rounded-full w-15 h-15`}
           />
-          <View style={tw`mt-2 bg-gray-100 py-1 px-3 rounded-full`}>
-            <Text style={tw`font-bold text-lg`}>⭐ 4.6</Text>
+          <View style={tw`px-3 py-1 mt-2 bg-gray-100 rounded-full`}>
+            <Text style={tw`text-lg font-bold`}>⭐ 4.6</Text>
           </View>
           <Text style={tw`mt-2 text-xl font-semibold`}>Eladuwage</Text>
         </View>
@@ -115,13 +115,13 @@ const Giverate: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible
           imageSize={40}
           startingValue={rating}
           onFinishRating={setRating}
-          style={tw`self-center mb-4 mt-4`}
+          style={tw`self-center mt-4 mb-4`}
           ratingBackgroundColor="#D1D5DB"
           tintColor="#FFFFFD"
         />
 
         {/* Compliment Section */}
-        <Text style={tw`text-lg font-semibold text-center mb-3`}>Give a compliment</Text>
+        <Text style={tw`mb-3 text-lg font-semibold text-center`}>Give a compliment</Text>
         <FlatList
           horizontal
           data={compliments}
@@ -129,7 +129,7 @@ const Giverate: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible
           renderItem={({ item }) => (
             <TouchableOpacity style={tw`items-center mx-2`}>
               <Text style={tw`text-3xl`}>{item.icon}</Text>
-              <Text style={tw`mt-2 text-center text-sm`}>{item.label}</Text>
+              <Text style={tw`mt-2 text-sm text-center`}>{item.label}</Text>
             </TouchableOpacity>
           )}
           className="max-h-20"
@@ -137,9 +137,9 @@ const Giverate: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible
         />
 
         {/* Text Area for Additional Feedback */}
-        <Text style={tw`text-lg font-semibold mt-5`}>Leave additional feedback</Text>
+        <Text style={tw`mt-5 text-lg font-semibold`}>Leave additional feedback</Text>
         <TextInput
-          style={tw`bg-gray-100 p-3 rounded-lg mt-2 h-30`}
+          style={tw`p-3 mt-2 bg-gray-100 rounded-lg h-30`}
           multiline
           placeholder="Write your comments here..."
           textAlignVertical="top"
@@ -150,10 +150,10 @@ const Giverate: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible
         {/* Done Button */}
         <View style={tw`p-5`}>
           <TouchableOpacity
-            style={tw`bg-green-600 py-3 rounded-full flex-row justify-center items-center mt-25`}
+            style={tw`flex-row items-center justify-center py-3 bg-green-600 rounded-full mt-25`}
             onPress={giveFeedback}
           >
-            <Text style={tw`text-white text-lg font-semibold mr-2`}>Submit Rating</Text>
+            <Text style={tw`mr-2 text-lg font-semibold text-white`}>Submit Rating</Text>
             <AntDesign name="check" size={20} color="white" />
           </TouchableOpacity>
         </View>
