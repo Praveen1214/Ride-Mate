@@ -373,9 +373,9 @@ const OfferRideScreen = () => {
             setLuggageCapacity,
             [
               { label: "Select luggage capacity", value: "" },
-              { label: "Small", value: "Small" },
-              { label: "Medium", value: "Medium" },
-              { label: "Large", value: "Large" }
+              { label: "Small-5L", value: "Small" },
+              { label: "Medium-20L", value: "Medium" },
+              { label: "Large-50L", value: "Large" }
             ],
             showLuggagePicker,
             setShowLuggagePicker,
