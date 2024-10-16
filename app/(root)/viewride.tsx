@@ -12,6 +12,148 @@ import Entypo from '@expo/vector-icons/Entypo';
 
 
 const ViewRide = () => {
+  const [rideDetails, setRideDetails] = useState(null);
+  const [requestedRides, setRequestedRides] = useState([]);
+  const route = useRoute();
+  const { contact } = route.params || {};
+  const [userName, setUserName] = useState("");
+  const [passengercontact, setPassengerContact] = useState("");
+  const [passengergender, setPassengerGender] = useState("");
+  const navigation = useNavigation();
+  const [rideRequested, setRideRequested] = useState(false); // New state to track ride request status
+
+  useEffect(() => {
+    const fetchRideDetails = async () => {
+      if (!contact) {
+        console.error("No contact provided");
+        return;
+      }
+      try {
+        const response = await axios.post(
+          `http://192.168.8.174:5000/api/offerride/getallofferrides/${contact}`
+        );
+        if (response.data.ride && response.data.ride.length > 0) {
+          setRideDetails(response.data.ride[0]);
+        } else {
+          console.log("No ride details found");
+        }
+      } catch (error) {
+        console.error("Error fetching ride details:", error);
+      }
+    };
+    fetchRideDetails();
+
+    const getPassengerDetails = async () => {
+      try {
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+          setUserName(
+            passengerDetails.firstname + " " + passengerDetails.lastname
+          );
+          setPassengerContact(passengerDetails.contact);
+          setPassengerGender(passengerDetails.gender);
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    getPassengerDetails();
+
+    const fetchReqDetails = async () => {
+      if (!contact) {
+        console.error("No contact provided");
+        return;
+      }
+      try {
+        const response = await axios.post(
+          `http://192.168.8.174:5000/api/requestride/getrequestrides/${contact}`
+        );
+        if (response.data.ride && response.data.ride.length > 0) {
+          setRequestedRides(response.data.ride);
+          console.log("Ride details found: ", response.data.ride);
+        } else {
+          console.log("No ride details found");
+        }
+      } catch (error) {
+        console.error("Error fetching ride details:", error);
+      }
+    };
+    fetchReqDetails();
+  }, [contact, userName, passengercontact, passengergender]);
+
+  const handleScheduleRide = async () => {
+    try {
+      const response = await axios.post(
+        "http://192.168.8.174:5000/api/requestride/addfindride",
+        {
+          passenger: userName,
+          passengercontact,
+          passengergender,
+          driver: rideDetails.driver,
+          drivercontact: contact,
+          start: rideDetails.start,
+          end: rideDetails.end,
+          datetime: new Date(rideDetails.datetime).toISOString(),
+          price: parseFloat(rideDetails.price)
+        }
+      );
+
+      if (response.status === 200) {
+        setRideRequested(true); // Set to true on successful ride request
+        Alert.alert("Success", "Ride request successfully!", [
+          {
+            text: "OK",
+            onPress: () => console.log("Ride Requested")
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error("Error details:", error.response?.data);
+      Alert.alert("Error", "Failed to request ride. Please try again later.", [
+        { text: "OK" }
+      ]);
+    }
+  };
+
+  const PassengerDetails = () => {
+    const maleCount = requestedRides.filter(
+      (ride) => ride.passengergender === "Male"
+    ).length;
+    const femaleCount = requestedRides.filter(
+      (ride) => ride.passengergender === "Female"
+    ).length;
+
+    return (
+      <View className="p-4 mx-2 mb-2 bg-white rounded-lg">
+        <Text className="mb-4 text-lg font-bold"> Passengers Details </Text>
+        <Text className="mb-2">
+          {" "}
+          {requestedRides.length} seats Booked Male - {maleCount} Female -{" "}
+          {femaleCount}{" "}
+        </Text>
+        {requestedRides.map((ride, index) => (
+          <View key={index} className="flex-row items-center mb-2">
+            <Avatar
+              rounded
+              title={ride.passenger.charAt(0)}
+              size="small"
+              containerStyle={{ backgroundColor: "black", marginRight: 10 }}
+            />
+            <Text> {ride.passenger} </Text>
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  if (!rideDetails) {
+    return <Text>Loading...</Text>;
+  }
+
 
  
   return (

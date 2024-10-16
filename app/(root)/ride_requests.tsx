@@ -166,6 +166,46 @@ const styles = StyleSheet.create({
 
 const Requests: React.FC = () => {
   const [showLongDistanceOnly, setShowLongDistanceOnly] = useState(false);
+  const [offerRides, setOfferRides] = useState([]);
+  const [contact, setContact] = useState("");
+
+  useEffect(() => {
+    const getPassengerDetails = async () => {
+      try {
+        const passengerDetailsString =
+          await AsyncStorage.getItem("passengerDetails");
+
+        if (passengerDetailsString) {
+          const passengerDetails = JSON.parse(passengerDetailsString);
+
+          if (passengerDetails.contact) {
+            const fetchOfferRides = async () => {
+              try {
+                const response = await axios.post(
+                  `http://192.168.8.174:5000/api/offerride/getallofferrides/${passengerDetails.contact}`
+                );
+                setOfferRides(response.data.ride);
+              } catch (error) {
+                console.error("Error fetching offer rides:", error);
+              }
+            };
+            fetchOfferRides();
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching user details:", error);
+      }
+    };
+
+    getPassengerDetails();
+    
+  }, []);
+
+  useEffect(() => {
+    // Fetch offer rides from your API
+    console.log("Contact:", contact);
+    
+  }, []);
 
   const filteredRequests = showLongDistanceOnly
     ? rideRequests.filter((request) => parseFloat(request.distance) > 20)

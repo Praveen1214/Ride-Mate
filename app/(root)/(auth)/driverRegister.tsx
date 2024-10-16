@@ -89,7 +89,7 @@ const UploadDocumentsScreen = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.8.187:5000/api/upload",
+        "http://192.168.8.174:5000/api/upload",
         formData,
         {
           headers: {
