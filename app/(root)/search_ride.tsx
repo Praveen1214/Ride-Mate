@@ -15,7 +15,7 @@ const SearchRide = () => {
     const fetchOfferRides = async () => {
       try {
         const response = await axios.get(
-          `http://192.168.43.196:5000/api/offerride/getallofferrides/${drop.address}`
+          `http://192.168.134.196:5000/api/offerride/getallofferrides/${drop.address}`
         );
         setOfferRides(response.data.searchride || []);
       } catch (error) {

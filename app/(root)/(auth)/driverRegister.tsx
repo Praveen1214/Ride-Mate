@@ -89,7 +89,7 @@ const UploadDocumentsScreen = () => {
 
     try {
       const response = await axios.post(
-        "http://192.168.8.187:5000/api/upload",
+        "http://192.168.134.196:5000/api/upload",
         formData,
         {
           headers: {
@@ -134,7 +134,7 @@ const UploadDocumentsScreen = () => {
 
   const renderUploadBox = (title, documentKey) => (
     <View className="mb-4">
-      <Text className="text-lg font-bold mb-2">{title}</Text>
+      <Text className="mb-2 text-lg font-bold">{title}</Text>
       <TouchableOpacity
         className={`border-2 rounded-lg p-2 items-center justify-center h-28 bg-white ${
           documents[documentKey].uri
@@ -152,7 +152,7 @@ const UploadDocumentsScreen = () => {
               className="w-full h-full rounded-lg"
             />
             <TouchableOpacity
-              className="absolute top-2 right-2 bg-red-500 rounded-full p-1"
+              className="absolute p-1 bg-red-500 rounded-full top-2 right-2"
               onPress={() => removeImage(documentKey)}
               accessibilityLabel={`Remove ${title}`}
             >
@@ -162,7 +162,7 @@ const UploadDocumentsScreen = () => {
         ) : (
           <View className="items-center">
             <MaterialIcons name="add-a-photo" size={24} color="#888" />
-            <Text className="text-base text-gray-500 mt-2">{title}</Text>
+            <Text className="mt-2 text-base text-gray-500">{title}</Text>
           </View>
         )}
       </TouchableOpacity>
@@ -170,7 +170,7 @@ const UploadDocumentsScreen = () => {
         documents[documentKey].progress < 100 && (
           <View className="mt-2 bg-gray-200 rounded-full">
             <View
-              className="bg-green-500 h-2 rounded-full"
+              className="h-2 bg-green-500 rounded-full"
               style={{ width: `${documents[documentKey].progress}%` }}
             />
           </View>
@@ -190,7 +190,7 @@ const UploadDocumentsScreen = () => {
         <Text className="text-2xl font-bold text-white">Document Upload</Text>
       </View>
       <ScrollView className="flex-1 p-5 bg-gray-100">
-        <Text className="text-2xl font-bold mb-5 text-center">
+        <Text className="mb-5 text-2xl font-bold text-center">
           Personal Documents
         </Text>
 
@@ -216,7 +216,7 @@ const UploadDocumentsScreen = () => {
           {isUploading ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="text-white text-lg font-bold">
+            <Text className="text-lg font-bold text-white">
               Upload Documents
             </Text>
           )}

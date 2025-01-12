@@ -185,7 +185,7 @@ const Requests: React.FC = () => {
             const fetchOfferRides = async () => {
               try {
                 const response = await axios.post(
-                  `http://192.168.43.196:5000/api/offerride/getallofferrides/${passengerDetails.contact}`
+                  `http://192.168.134.196:5000/api/offerride/getallofferrides/${passengerDetails.contact}`
                 );
                 setOfferRides(response.data.ride);
               } catch (error) {
