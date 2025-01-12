@@ -43,14 +43,21 @@ const Requests: React.FC = () => {
     fetchPassengerDetails();
   }, []);
 
-  const fetchPassengerDetails = async () => {
-    try {
-      const passengerDetailsString = await AsyncStorage.getItem("passengerDetails");
-      if (passengerDetailsString) {
-        const passengerDetails = JSON.parse(passengerDetailsString);
-        if (passengerDetails.contact) {
-          setContact(passengerDetails.contact);
-          fetchOfferRides(passengerDetails.contact);
+
+          if (passengerDetails.contact) {
+            const fetchOfferRides = async () => {
+              try {
+                const response = await axios.post(
+                  `http://192.168.134.196:5000/api/offerride/getallofferrides/${passengerDetails.contact}`
+                );
+                setOfferRides(response.data.ride);
+              } catch (error) {
+                console.error("Error fetching offer rides:", error);
+              }
+            };
+            fetchOfferRides();
+          }
+
         }
       }
     } catch (error) {

@@ -69,7 +69,9 @@ const Giverate: React.FC<{ visible: boolean; onClose: () => void }> = ({ visible
     };
 
     try {
-      const result = await axios.post('http://192.168.8.174:5000/api/feedback/addfeedback', feedback);
+
+      const result = await axios.post('http://192.168.134.196:5000/api/feedback/addfeedback', feedback);
+
       if (!result.data.success) {
         Alert.alert('Success', 'Feedback submitted successfully'); // Display success message
         onClose(); // Close modal on successful submission

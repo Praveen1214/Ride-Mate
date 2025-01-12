@@ -44,7 +44,7 @@ const Review = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://192.168.43.196:5000/api/feedback/getallfeedback"
+        "http://192.168.134.196:5000/api/feedback/getallfeedback"
       );
       setFeedback(response.data);
       setLoading(false);
