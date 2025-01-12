@@ -10,6 +10,8 @@ const Layout = () => {
       <Stack.Screen name="real_tracking" options={{ headerShown: false }} />
       <Stack.Screen name="SearchRide" options={{ headerShown: false }} />
       <Stack.Screen name="viewride" options={{ headerShown: false }} />
+      <Stack.Screen name="ride_requests" options={{ headerShown: false }} />
+
     </Stack>
   );
 };

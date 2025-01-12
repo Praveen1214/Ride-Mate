@@ -31,7 +31,9 @@ const ViewRide = () => {
       }
       try {
         const response = await axios.post(
+
           `http://192.168.134.196:5000/api/offerride/getallofferrides/${contact}`
+
         );
         if (response.data.ride && response.data.ride.length > 0) {
           setRideDetails(response.data.ride[0]);
@@ -71,7 +73,9 @@ const ViewRide = () => {
       }
       try {
         const response = await axios.post(
+
           `http://192.168.134.196:5000/api/requestride/getrequestrides/${contact}`
+
         );
         if (response.data.ride && response.data.ride.length > 0) {
           setRequestedRides(response.data.ride);
@@ -89,7 +93,9 @@ const ViewRide = () => {
   const handleScheduleRide = async () => {
     try {
       const response = await axios.post(
+
         "http://192.168.134.196:5000/api/requestride/addfindride",
+
         {
           passenger: userName,
           passengercontact,

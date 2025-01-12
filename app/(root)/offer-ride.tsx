@@ -98,7 +98,9 @@ const OfferRideScreen = () => {
     setIsLoading(true);
     try {
 
+
       const response = await axios.post('http://192.168.134.196:5000/api/offerride/addofferride', {
+
         driver: userName,
         contact: contact,
 
@@ -373,9 +375,9 @@ const OfferRideScreen = () => {
             setLuggageCapacity,
             [
               { label: "Select luggage capacity", value: "" },
-              { label: "Small", value: "Small" },
-              { label: "Medium", value: "Medium" },
-              { label: "Large", value: "Large" }
+              { label: "Small-5L", value: "Small" },
+              { label: "Medium-20L", value: "Medium" },
+              { label: "Large-50L", value: "Large" }
             ],
             showLuggagePicker,
             setShowLuggagePicker,
